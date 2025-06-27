@@ -1,0 +1,3835 @@
+{block:NotLoadItemsPage}
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="utf-8">
+    <meta name="copyright" content="BASE">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{PageTitle}</title>
+    <meta name="BASE-Theme-Name" content="HOLY LABEL">
+    <meta name="BASE-Theme-Version" content="1">
+    <!-- BASE必須タグ -->
+    {FaviconTag}
+    {CanonicalTag}
+    {BackgroundTag}
+    <!-- ページ別メタ情報 -->
+    {block:IndexPage}
+        {HeadLinkNextPrevTag}
+    {/block:IndexPage}
+    {block:ItemPage}
+        {MetaItemInfoTag}
+    {/block:ItemPage}
+    {block:NotItemPage}
+        {MetaShopInfoTag}
+    {/block:NotItemPage}
+    {GoogleAnalyticsTag}
+    <!-- BASE Apps CSS -->
+    {block:AppsSearch}
+        <link rel="stylesheet" type="text/css" href="{BASEURL}/search/css/shopTemplate/search.css?{UpdateTime}">
+    {/block:AppsSearch}
+    {block:AppsItemLabel}
+        <link rel="stylesheet" type="text/css" href="{BASEURL}/item_label/css/ShopTemplate/style.css?{UpdateTime}">
+        <script type="text/javascript" src="{BASEURL}/item_label/js/ShopTemplate/labelpostion.js?{UpdateTime}"></script>
+    {/block:AppsItemLabel}
+    {block:AppsBlog}
+        <link href="{BlogFeedPageURL}" rel="alternate" type="application/rss+xml" title="Blog | {ShopName}">
+    {/block:AppsBlog}
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* CSS変数定義 */
+        :root {
+            --primary-bg: #0B101D; --primary-text: #fff; --secondary-text: #ccc; --muted-text: #666; --dark-text: #444; --accent-color: #D43883; --error-color: #ff4444; --border-color: #333; --overlay-bg: rgba(11, 16, 29, 0.95); --overlay-backdrop: rgba(11, 16, 29, 0.5); --soldout-overlay: rgba(11, 16, 29, 0.8);
+            --font-base: 1.2rem; --font-xs: 0.9rem; --font-sm: 1.0rem; --font-md: 1.2rem; --font-lg: 1.4rem; --font-xl: 1.6rem; --weight-light: 300; --weight-normal: 400; --weight-bold: 700;
+            --space-xs: 0.5rem; --space-sm: 1rem; --space-md: 2rem; --space-lg: 4rem; --space-xl: 8rem;
+            --form-field-margin: 40px; --form-field-margin-mobile: 50px; --form-padding: 16px; --form-padding-mobile: 12px 16px;
+            --transition-fast: 0.3s ease; --transition-slow: 1.5s ease-out;
+            --z-navigation: 999; --z-header: 1000; --z-hamburger: 1001; --z-menu-open: 1002; --z-modal: 2000; --z-banner: 2005;
+        }
+        /* リセット・ベーススタイル */
+        html {
+            -ms-overflow-style: -ms-autohiding-scrollbar;
+            overflow-y: scroll;
+            -webkit-text-size-adjust: 100%;
+            font-size: 62.5%;
+            box-sizing: border-box;
+        }
+        *, *::before, *::after {
+            box-sizing: inherit;
+        }
+        body {
+            margin: 0;
+            font-family: 'Noto Sans', Arial, sans-serif;
+            font-size: var(--font-base);
+            line-height: 1.6;
+            font-weight: var(--weight-light);
+            background-color: var(--primary-bg) !important;
+            color: var(--primary-text) !important;
+            overflow-x: hidden;
+        }
+        a {
+            color: var(--primary-text);
+            text-decoration: none;
+            transition: opacity var(--transition-fast);
+        }
+        a:hover { opacity: 0.6; }
+        /* BASE色設定の活用 */
+        {block:TextColor}body { color: {TextColor} !important; }{/block:TextColor}
+        {block:LinkColor}a { color: {LinkColor} !important; }{/block:LinkColor}
+        {block:NavColor}.nav-item { color: {NavColor} !important; }{/block:NavColor}
+        /* ハンバーガーメニュー */
+        button.humberger {
+            position: fixed;
+            top: calc(var(--information-banner-height, 0px) + 20px);
+            left: 20px;
+            width: 3rem;
+            height: 2rem;
+            z-index: var(--z-hamburger);
+            background: transparent;
+            border: none;
+            cursor: pointer;
+        }
+        .humberger__line {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: all var(--transition-fast);
+        }
+        .humberger__line:before, .humberger__line:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: var(--accent-color);
+            transition: all var(--transition-fast);
+        }
+        .humberger__line:before { top: -8px; }
+        .humberger__line:after { top: 8px; }
+        .humberger.-active .humberger__line { background-color: transparent; }
+        .humberger.-active .humberger__line::before { transform: rotate(45deg); top: 0; }
+        .humberger.-active .humberger__line::after { transform: rotate(-45deg); top: 0; }
+        /* ロゴ・BASEメニュー */
+        .logo {
+            position: fixed;
+            top: calc(var(--information-banner-height, 0px) + 15px);
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 16px;
+            letter-spacing: 2px;
+            font-weight: normal;
+            z-index: 1000;
+            max-width: 150px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        .logo a { color: #fff !important; display: block; }
+        .logo img {
+            max-width: 100%;
+            height: auto;
+            max-height: 30px;
+            object-fit: contain;
+        }
+        .logo a:not(:has(img)) {
+            font-size: 16px;
+            letter-spacing: 2px;
+            font-weight: normal;
+        }
+        /* ロゴ位置制御クラス */
+        .logo.center-position {
+            top: 50% !important;
+            left: 50% !important;
+            transform: translate(-50%, -50%) !important;
+            z-index: 1001;
+            text-align: center;
+            transition: none !important;
+        }
+        /* デスクトップでの中央ロゴサイズ拡大 */
+        @media (min-width: 769px) {
+            .logo.center-position {
+                max-width: 300px;
+                font-size: 32px;
+                letter-spacing: 4px;
+            }
+            .logo.center-position img {
+                max-height: 80px;
+            }
+            .logo.center-position a:not(:has(img)) {
+                font-size: 32px;
+                letter-spacing: 4px;
+            }
+        }
+        .logo.header-position {
+            position: absolute !important;
+            top: calc(var(--information-banner-height, 0px) + 20px) !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 1000;
+            text-align: center;
+        }
+        .logo.menu-open-position {
+            position: fixed !important;
+            top: calc(var(--information-banner-height, 0px) + 20px) !important;
+            left: 50% !important;
+            transform: translateX(-50%) !important;
+            z-index: 1002;
+            text-align: center;
+            transition: none !important;
+        }
+        .base-menu-container {
+            position: fixed;
+            top: calc(var(--information-banner-height, 0px) + 20px);
+            right: 20px;
+            z-index: 1000;
+            transform: scale(0.6);
+        }
+        /* BASEメニューコンテナのレスポンシブ対応 */
+        @media (max-width: 768px) {
+            .base-menu-container {
+                top: calc(var(--information-banner-height, 0px) + 15px);
+                right: 15px;
+                transform: scale(0.5);
+            }
+        }
+        /* BASEメニュー内のカートアイコンスタイル調整 */
+        .base-menu-container .bc-cart {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+        }
+        .base-menu-container .bc-cart svg,
+        .base-menu-container .bc-cart path {
+            fill: #666666 !important;
+            stroke: #666666 !important;
+        }
+        .base-menu-container .bc-cart:hover svg,
+        .base-menu-container .bc-cart:hover path {
+            fill: var(--primary-text) !important;
+            stroke: var(--primary-text) !important;
+        }
+        /* BASEロゴの非表示（カートのみ表示） */
+        .base-menu-container .bc-logo {
+            display: none !important;
+        }
+        /* カート数量バッジのスタイル調整 */
+        .base-menu-container .bc-cart-count {
+            background-color: var(--accent-color) !important;
+            color: white !important;
+            font-size: 10px !important;
+            min-width: 16px !important;
+            height: 16px !important;
+            line-height: 16px !important;
+            border-radius: 8px !important;
+            padding: 0 4px !important;
+        }
+        /* BASEメニュー全体のスタイル調整 */
+        .base-menu-container > div {
+            display: flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+        }
+        /* その他のBASE要素の非表示・調整 */
+        .base-menu-container .bc-powered-by {
+            display: none !important;
+        }
+        .base-menu-container .bc-menu {
+            background-color: transparent !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+        /* カートアイコンのサイズ調整 */
+        .base-menu-container .bc-cart svg {
+            width: 24px !important;
+            height: 24px !important;
+        }
+        @media (max-width: 768px) {
+            .base-menu-container .bc-cart svg {
+                width: 20px !important;
+                height: 20px !important;
+            }
+        }
+        /*
+           ナビゲーションエリア
+ */
+        .header__nav-area {
+            position: fixed;
+            top: 0;
+            left: -100%;
+            width: 30rem;
+            height: 100vh;
+            background-color: var(--overlay-bg);
+            transition: all var(--transition-fast);
+            z-index: var(--z-navigation);
+            padding: var(--space-xl) var(--space-lg);
+            overflow-y: auto;
+            transform: translateX(-100%);
+            opacity: 0;
+            visibility: hidden;
+        }
+        .header__nav-area.-active {
+            left: 0;
+            transform: translateX(0);
+            opacity: 1;
+            visibility: visible;
+        }
+        .body-fixed { overflow: hidden; }
+        .body-fixed:after {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--overlay-backdrop);
+            z-index: calc(var(--z-navigation) - 1);
+        }
+        /* グローバルナビゲーション */
+        .global-navigation__list {
+            margin-bottom: 4rem;
+            list-style: none;
+        }
+        .global-navigation__list > li {
+            margin-bottom: 2rem;
+        }
+        .global-navigation__list > li > a {
+            color: var(--primary-text);
+            font-size: var(--font-md);
+            font-weight: var(--weight-light);
+            letter-spacing: 0;
+            text-decoration: none;
+            transition: opacity var(--transition-fast);
+        }
+        .global-navigation__list > li > a:hover {
+            opacity: 0.7;
+        }
+        .global-navigation__list > li > a.expand {
+            position: relative;
+            padding-right: 3rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        a.expand:after {
+            content: '+';
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: var(--font-lg);
+            font-weight: var(--weight-light);
+            line-height: 1;
+            transition: all var(--transition-fast);
+        }
+        a.expand.open:after {
+            transform: translateY(-50%) rotate(45deg);
+        }
+        ul.ex-list {
+            padding-left: 2rem;
+            margin-top: 1rem;
+            list-style: none;
+        }
+        ul.ex-list > li {
+            margin-bottom: 1rem;
+        }
+        ul.ex-list > li > a {
+            color: var(--secondary-text);
+            font-size: var(--font-sm);
+            font-weight: var(--weight-light);
+            letter-spacing: 0;
+            text-decoration: none;
+            transition: opacity var(--transition-fast);
+        }
+        ul.ex-list > li > a:hover {
+            opacity: 0.7;
+        }
+        /* 中カテゴリのスタイル */
+        ul.ex-list > li.sub-category {
+            padding-left: var(--space-sm);
+        }
+        ul.ex-list > li.sub-category > a {
+            color: var(--muted-text);
+            font-size: var(--font-xs);
+            font-weight: var(--weight-light);
+        }
+        ul.ex-list > li.sub-category > a:hover {
+            color: var(--secondary-text);
+        }
+        /* 検索フォーム */
+        .search-form {
+            display: flex;
+            align-items: center;
+            padding-bottom: 2rem;
+            border-bottom: 1px solid #333;
+        }
+        .search-form input[type="search"] {
+            flex: 1;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--primary-text);
+            padding: var(--space-sm) 0;
+            font-size: var(--font-sm);
+            font-weight: var(--weight-light);
+        }
+        .search-form input[type="search"]:focus {
+            outline: none;
+            border-bottom-color: var(--primary-text);
+        }
+        .search-form input[type="submit"] {
+            background: transparent;
+            border: none;
+            color: var(--accent-color);
+            font-size: var(--font-sm);
+            cursor: pointer;
+            padding: var(--space-sm);
+            margin-left: var(--space-sm);
+            font-weight: var(--weight-light);
+        }
+        /* パンくずリスト */
+        .breadcrumb-container {
+            margin-bottom: 2rem;
+        }
+        .breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            font-size: 1.0rem;
+            font-weight: 300;
+        }
+        .breadcrumb__child {
+            display: flex;
+            align-items: center;
+        }
+        .breadcrumb__child:not(:last-child)::after {
+            content: '>';
+            margin: 0 1rem;
+            color: #666;
+        }
+        .breadcrumb__link {
+            color: #ccc;
+            text-decoration: none;
+            transition: opacity 0.3s ease;
+        }
+        .breadcrumb__link:hover {
+            opacity: 0.7;
+        }
+        .breadcrumb__notlink {
+            color: #fff;
+        }
+        /* 子カテゴリ表示 */
+        .child-categories {
+            margin-top: 2rem;
+        }
+        .child-category-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+        }
+        .child-category-list li a {
+            display: inline-block;
+            padding: 0.8rem 1.6rem;
+            border: 1px solid #333;
+            color: #ccc;
+            text-decoration: none;
+            font-size: 1.0rem;
+            font-weight: 300;
+            transition: all 0.3s ease;
+        }
+        .child-category-list li a:hover {
+            border-color: #fff;
+            color: #fff;
+        }
+        /*
+           メインビジュアル・ヒーロー画像
+ */
+        .main-visual {
+            width: 100%;
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary-bg);
+        }
+        .visual-content {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+        /* 写真 */
+        .hero-image {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        overflow: hidden;
+            opacity: 0;
+            transition: opacity var(--transition-slow);
+        }
+        .hero-image.fade-in {
+            opacity: 1;
+        }
+        .hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        /* レスポンシブ画像制御 */
+        .hero-image-desktop {
+            display: block;
+        }
+        .hero-image-mobile {
+            display: none;
+        }
+        /* プレースホルダー */
+        .placeholder {
+            width: 100%;
+            height: 100%;
+            background-color: var(--primary-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--muted-text);
+            font-size: var(--font-xs);
+            letter-spacing: 2px;
+        }
+        /* テキストオーバーレイ */
+        .overlay-text {
+            position: absolute;
+            bottom: 60px;
+            left: 60px;
+            font-size: 56px;
+            font-family: 'Noto Sans', Arial, sans-serif;
+            font-style: italic;
+            opacity: 0.8;
+            letter-spacing: 2px;
+            font-weight: 100;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+        /*
+           キーフレームアニメーション
+ */
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: translateY(50px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+        @keyframes loading {
+            0% {
+                background-position: -200px 0;
+            }
+            100% {
+                background-position: calc(200px + 100%) 0;
+            }
+        }
+        @keyframes pulse {
+            0%, 100% {
+                opacity: 0.4;
+            }
+            50% {
+                opacity: 0.6;
+            }
+        }
+        /*
+           商品一覧・ヘッダー
+ */
+        .product-section {
+            padding: 80px 40px;
+            background-color: #0B101D;
+        }
+        .category-header, .search-header {
+            padding-top: 120px;
+            padding-bottom: 40px;
+            background-color: #0B101D;
+            text-align: center;
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        .category-header .page-content, .search-header .page-content {
+            padding: 0 40px;
+        }
+        .category-header h2, .search-header h2 {
+            font-size: 18px;
+            font-weight: 300;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: #fff;
+        }
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .product-item {
+            position: relative;
+            background-color: #0B101D;
+            opacity: 0;
+            transform: translateY(50px) scale(0.95);
+            transition: all 0.3s ease, transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            animation: fadeInScale 0.6s ease-out forwards;
+        }
+        .product-item:nth-child(1) { animation-delay: 0.1s; }
+        .product-item:nth-child(2) { animation-delay: 0.2s; }
+        .product-item:nth-child(3) { animation-delay: 0.3s; }
+        .product-item:nth-child(4) { animation-delay: 0.4s; }
+        .product-item:nth-child(5) { animation-delay: 0.5s; }
+        .product-item:nth-child(6) { animation-delay: 0.6s; }
+        .product-item:nth-child(7) { animation-delay: 0.7s; }
+        .product-item:nth-child(8) { animation-delay: 0.8s; }
+        .product-item:nth-child(9) { animation-delay: 0.9s; }
+        .product-item:hover {
+            background-color: #0B101D;
+            transform: translateY(-5px) scale(1.02);
+        }
+        .product-image {
+            width: 100%;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(
+                90deg,
+                #0B101D 0%,
+                #1a2a3a 50%,
+                #0B101D 100%
+            );
+            background-size: 200px 100%;
+            animation: loading 1.5s infinite;
+        }
+        .product-image.loaded {
+            background: none;
+            animation: none;
+        }
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            transform: scale(1);
+            opacity: 0;
+        }
+        .product-image img.loaded {
+            opacity: 1;
+        }
+        .product-item:hover .product-image img {
+            transform: scale(1.05);
+        }
+        /*
+           MODAL STYLES - モーダル表示機能
+ */
+        .base-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: var(--z-modal);
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .base-modal.show {
+            opacity: 1;
+            visibility: visible;
+        }
+        .base-modal-content {
+            background-color: var(--primary-bg);
+            border-radius: 8px;
+            padding: 40px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+            transform: translateY(30px);
+            transition: transform 0.3s ease;
+            border: 1px solid var(--border-color);
+        }
+        .base-modal.show .base-modal-content {
+            transform: translateY(0);
+        }
+        .base-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        .base-modal-title {
+            font-size: 1.4rem;
+            font-weight: var(--weight-normal);
+            color: var(--primary-text);
+            margin: 0;
+            letter-spacing: 1px;
+        }
+        .base-modal-close {
+            background: none;
+            border: none;
+            font-size: 1.8rem;
+            cursor: pointer;
+            color: var(--secondary-text);
+            padding: 8px;
+            line-height: 1;
+            transition: color 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+        }
+        .base-modal-close:hover {
+            color: var(--primary-text);
+        }
+        .base-modal-body {
+            color: var(--secondary-text);
+            line-height: 1.6;
+            font-weight: var(--weight-light);
+            margin-bottom: 24px;
+        }
+        .base-modal-form {
+            margin-top: 24px;
+        }
+        .base-modal-form input {
+            width: 100%;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            transition: border-color 0.2s ease;
+            box-sizing: border-box;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            font-weight: var(--weight-light);
+        }
+        .base-modal-form input::placeholder {
+            color: var(--muted-text);
+        }
+        .base-modal-form input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        .base-modal-form button {
+            background-color: var(--accent-color);
+            color: var(--primary-text);
+            border: none;
+            padding: 16px 24px;
+            border-radius: 4px;
+            font-size: 1rem;
+            font-weight: var(--weight-normal);
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            width: 100%;
+            letter-spacing: 1px;
+        }
+        .base-modal-form button:hover {
+            background-color: rgba(212, 56, 131, 0.8);
+        }
+        .base-modal-form button:disabled {
+            background-color: var(--muted-text);
+            cursor: not-allowed;
+        }
+        /*
+           PAY ID WIDGET STYLES - Pay IDあと払いウィジェット
+ */
+        .payid-widget {
+            margin-top: 20px;
+            padding: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+        .payid-widget * {
+            color: var(--primary-text) !important;
+            font-family: 'Noto Sans', Arial, sans-serif !important;
+            font-weight: var(--weight-light) !important;
+        }
+        .payid-widget .payid-title {
+            font-size: 1rem;
+            font-weight: var(--weight-normal) !important;
+            letter-spacing: 1px;
+            color: var(--secondary-text) !important;
+            margin-bottom: 8px;
+        }
+        .payid-widget .payid-description {
+            font-size: 0.9rem;
+            color: var(--muted-text) !important;
+            line-height: 1.4;
+        }
+        /*
+           RELATED PRODUCTS STYLES - 関連商品表示
+ */
+        .related-products {
+            margin-top: 80px;
+            padding: 60px 0;
+            border-top: 1px solid var(--border-color);
+        }
+        .related-products-header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        .related-products-title {
+            font-size: 1.4rem;
+            font-weight: var(--weight-light);
+            letter-spacing: 2px;
+            color: var(--primary-text);
+            text-transform: uppercase;
+            margin: 0;
+        }
+        .related-products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 30px;
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .related-product-item {
+            position: relative;
+            background-color: var(--primary-bg);
+            transition: transform var(--transition-fast);
+            opacity: 0;
+            transform: translateY(30px);
+            animation: fadeInUp 0.8s ease-out forwards;
+        }
+        .related-product-item:nth-child(1) { animation-delay: 0.1s; }
+        .related-product-item:nth-child(2) { animation-delay: 0.2s; }
+        .related-product-item:nth-child(3) { animation-delay: 0.3s; }
+        .related-product-item:hover {
+            transform: translateY(-5px);
+        }
+        .related-product-image {
+            width: 100%;
+            aspect-ratio: 3/4;
+            overflow: hidden;
+            position: relative;
+            background: linear-gradient(
+                90deg,
+                var(--primary-bg) 0%,
+                #1a2a3a 50%,
+                var(--primary-bg) 100%
+            );
+            background-size: 200px 100%;
+            animation: loading 1.5s infinite;
+        }
+        .related-product-image.loaded {
+            background: none;
+            animation: none;
+        }
+        .related-product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform var(--transition-fast);
+            opacity: 0;
+        }
+        .related-product-image img.loaded {
+            opacity: 1;
+        }
+        .related-product-item:hover .related-product-image img {
+            transform: scale(1.05);
+        }
+        .related-product-info {
+            padding: 20px 0;
+            text-align: center;
+        }
+        .related-product-title {
+            font-size: 1rem;
+            font-weight: var(--weight-light);
+            color: var(--primary-text);
+            margin: 0 0 8px 0;
+            letter-spacing: 1px;
+            line-height: 1.4;
+        }
+        .related-product-price {
+            font-size: 0.9rem;
+            color: var(--secondary-text);
+            font-weight: var(--weight-light);
+            margin: 0;
+        }
+        @media (max-width: 768px) {
+            .related-products {
+                margin-top: 60px;
+                padding: 40px 20px;
+            }
+            .related-products-grid {
+                grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+                gap: 20px;
+            }
+            .related-products-title {
+                font-size: 1.2rem;
+                margin-bottom: 30px;
+            }
+            .related-product-title {
+                font-size: 0.9rem;
+            }
+            .related-product-price {
+                font-size: 0.8rem;
+            }
+        }
+        /*
+           商品ステータス表示（Out of stock / SOLD OUT）
+ */
+        .product-item.out-of-stock .product-image img {
+            filter: grayscale(100%);
+            opacity: 0.5;
+        }
+        .product-item.out-of-stock:hover .product-image img {
+            filter: grayscale(100%);
+            opacity: 0.5;
+            transform: scale(1);
+        }
+        .product-item.out-of-stock {
+            pointer-events: none;
+        }
+        .product-item.out-of-stock .product-info {
+            opacity: 0.7;
+        }
+        .soldout_cover {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: var(--soldout-overlay);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .soldout_cover p {
+            color: var(--primary-text);
+            font-size: var(--font-sm);
+            letter-spacing: 2px;
+            font-weight: var(--weight-light);
+        }
+        /*
+           商品情報・価格表示（一覧では非表示）
+ */
+        .product-info,
+        .product-title,
+        .product-price {
+            display: none;
+        }
+        .product-title {
+            font-size: 1.2rem;
+            font-weight: var(--weight-light);
+            letter-spacing: 1px;
+            margin-bottom: var(--space-xs);
+            color: var(--primary-text);
+        }
+        .product-price {
+            font-size: var(--font-xs);
+            color: var(--secondary-text);
+            font-weight: var(--weight-light);
+        }
+        .price-sale {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+        }
+        .original-price {
+            text-decoration: line-through;
+            color: var(--muted-text);
+        }
+        .sale-price {
+            color: var(--primary-text);
+            font-weight: var(--weight-bold);
+        }
+        .discount-rate {
+            background-color: var(--error-color);
+            color: var(--primary-text);
+            padding: 2px 6px;
+            font-size: 1.2rem;
+            border-radius: 2px;
+        }
+        /*
+           商品詳細ページ
+ */
+        .product-detail {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            max-width: 1200px;
+            margin: 80px auto;
+            padding: 0 40px;
+        }
+        .product-detail-image {
+            position: relative;
+        }
+        /* メイン画像コンテナ */
+        .main-image-container {
+            position: relative;
+            margin-bottom: var(--space-md);
+        }
+        .main-image-container img {
+            width: 100%;
+            height: auto;
+            transition: transform var(--transition-fast);
+        }
+        .main-image-container:hover img {
+            transform: scale(1.02);
+        }
+        /* サムネイル画像コンテナ（カルーセル形式のため非表示） */
+        .thumbnail-container {
+            display: none;
+        }
+        /* 画像カルーセル用ナビゲーション */
+        .image-carousel-nav {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background-color: rgba(255, 255, 255, 0.9);
+            border: 1px solid rgba(200, 200, 200, 0.8);
+            color: #333;
+            width: 48px;
+            height: 48px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            opacity: 0.8;
+        }
+        .image-carousel-nav:hover {
+            background-color: rgba(255, 255, 255, 1);
+            border-color: rgba(150, 150, 150, 0.9);
+            opacity: 1;
+            transform: translateY(-50%) scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+        }
+        .image-carousel-nav:active,
+        .image-carousel-nav:focus {
+            border-color: var(--accent-color);
+            outline: none;
+            box-shadow: 0 0 0 2px rgba(212, 56, 131, 0.2);
+        }
+        .image-carousel-nav.prev {
+            left: 16px;
+        }
+        .image-carousel-nav.next {
+            right: 16px;
+        }
+        .image-carousel-nav svg {
+            width: 20px;
+            height: 20px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+        /* 画像が1枚しかない場合はナビゲーションを非表示 */
+        .main-image-container.single-image .image-carousel-nav {
+            display: none;
+        }
+        /* 画像インジケーター */
+        .image-indicators {
+            position: absolute;
+            bottom: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+        .image-indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.4);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+        }
+        .image-indicator.active {
+            background-color: var(--accent-color);
+            transform: scale(1.2);
+        }
+        .image-indicator:hover {
+            background-color: rgba(255, 255, 255, 0.6);
+        }
+        /* 画像が1枚しかない場合はインジケーターを非表示 */
+        .main-image-container.single-image .image-indicators {
+            display: none;
+        }
+        .product-detail-image img {
+        width: 100%;
+            height: auto;
+            transition: transform var(--transition-fast);
+        }
+        .product-detail-image:hover img {
+            transform: scale(1.02);
+        }
+        /* レスポンシブ対応（商品画像カルーセル） */
+        @media (max-width: 768px) {
+            .image-carousel-nav {
+                width: 40px;
+                height: 40px;
+                opacity: 0.85;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+            }
+            .image-carousel-nav.prev {
+                left: 12px;
+            }
+            .image-carousel-nav.next {
+                right: 12px;
+            }
+            .image-carousel-nav svg {
+                width: 16px;
+                height: 16px;
+            }
+            .main-image-container {
+                margin-bottom: var(--space-sm);
+            }
+            .image-indicators {
+                bottom: 12px;
+            }
+            .image-indicator {
+                width: 6px;
+                height: 6px;
+            }
+        }
+        @media (max-width: 480px) {
+            .image-carousel-nav {
+                width: 36px;
+                height: 36px;
+                box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+            }
+            .image-carousel-nav.prev {
+                left: 8px;
+            }
+            .image-carousel-nav.next {
+                right: 8px;
+            }
+            .image-carousel-nav svg {
+                width: 14px;
+                height: 14px;
+            }
+        }
+        .product-detail-info {
+            padding: 40px 0;
+        }
+        .product-detail-title {
+            font-size: var(--font-lg);
+            font-weight: var(--weight-light);
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            color: var(--primary-text);
+            line-height: 1.3;
+        }
+        .product-detail-price {
+            font-size: var(--font-md);
+            margin-bottom: 24px;
+            font-weight: var(--weight-light);
+            color: var(--primary-text);
+        }
+        .product-description {
+            font-size: var(--font-xs);
+            line-height: 1.6;
+            margin-bottom: 40px;
+            color: var(--secondary-text);
+            font-weight: var(--weight-light);
+        }
+        /*
+           商品購入フォーム
+ */
+        .product-purchase {
+            margin-bottom: 40px;
+        }
+        /* BASE ItemSelectTag のスタイリング */
+        .product-purchase select {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            font-size: var(--font-xs);
+            font-weight: var(--weight-light);
+            font-family: 'Noto Sans', Arial, sans-serif;
+        cursor: pointer;
+            transition: border-color var(--transition-fast);
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ccc' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6,9 12,15 18,9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            background-size: 16px;
+            padding-right: 40px;
+        }
+        .product-purchase select:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        .product-purchase select option {
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+        }
+        /* 数量入力フィールド */
+        .product-purchase input[type="number"] {
+            width: 80px;
+            padding: 12px 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            font-size: var(--font-xs);
+            font-weight: var(--weight-light);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            text-align: center;
+            -webkit-appearance: none;
+            -moz-appearance: textfield;
+        }
+        .product-purchase input[type="number"]::-webkit-outer-spin-button,
+        .product-purchase input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        .product-purchase input[type="number"]:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        /* ADD TO BAG ボタンスタイル */
+        .product-purchase button,
+        .product-purchase input[type="submit"] {
+            width: 100%;
+            background-color: #f8f8f8;
+        color: #000;
+            border: 1px solid #e0e0e0;
+            padding: 18px 24px;
+            font-size: var(--font-sm);
+            font-weight: var(--weight-normal);
+            letter-spacing: 2px;
+        text-transform: uppercase;
+        cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            border-radius: 0;
+            margin-top: 8px;
+        }
+        .product-purchase button:hover,
+        .product-purchase input[type="submit"]:hover {
+            background-color: #e8e8e8;
+            border-color: #d0d0d0;
+            transform: translateY(-1px);
+        }
+        .product-purchase button:active,
+        .product-purchase input[type="submit"]:active {
+            transform: translateY(0);
+        }
+        /* 売り切れ時のボタンスタイル */
+        .product-purchase button:disabled,
+        .product-purchase input[type="submit"]:disabled {
+            background-color: var(--muted-text);
+            color: var(--primary-text);
+            border-color: var(--muted-text);
+            cursor: not-allowed;
+            transform: none;
+        }
+        /*
+           一覧に戻るボタン（商品詳細ページ）
+ */
+        .back-to-list-container {
+            text-align: center;
+            margin: var(--space-xl) 0 var(--space-lg) 0;
+            padding: 0 var(--space-lg);
+        }
+        .back-to-list-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: var(--space-xs);
+            background-color: #f8f8f8;
+            color: #000;
+            border: 1px solid #e0e0e0;
+            padding: 18px 32px;
+            font-size: var(--font-sm);
+            font-weight: var(--weight-normal);
+            letter-spacing: 2px;
+        text-transform: uppercase;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            border-radius: 0;
+        }
+        .back-to-list-btn:hover {
+            background-color: #e8e8e8;
+            border-color: #d0d0d0;
+            transform: translateY(-1px);
+            opacity: 1;
+        }
+        .back-to-list-btn:active {
+            transform: translateY(0);
+        }
+        .back-to-list-btn .back-icon {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            stroke-width: 2;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            fill: none;
+        }
+        /*
+           商品詳細ページ - モバイル対応
+ */
+        @media (max-width: 768px) {
+            .product-detail {
+                grid-template-columns: 1fr;
+                gap: 30px;
+                margin: 60px auto;
+                padding: 0 20px;
+            }
+            .product-detail-info {
+                padding: 20px 0;
+            }
+            .product-detail-title {
+                font-size: var(--font-md);
+                margin-bottom: 12px;
+            }
+            .product-detail-price {
+                font-size: var(--font-sm);
+                margin-bottom: 20px;
+            }
+            .product-description {
+                font-size: 0.8rem;
+                margin-bottom: 30px;
+            }
+            .product-purchase button,
+            .product-purchase input[type="submit"] {
+                padding: 16px 20px;
+                font-size: 0.9rem;
+                letter-spacing: 1.5px;
+            }
+            .product-purchase select {
+                padding: 10px 12px;
+                font-size: 0.8rem;
+                padding-right: 35px;
+                background-size: 14px;
+            }
+            .product-purchase input[type="number"] {
+                width: 70px;
+                padding: 10px 12px;
+                font-size: 0.8rem;
+            }
+            /* 一覧に戻るボタン - モバイル */
+            .back-to-list-container {
+                margin: var(--space-lg) 0 var(--space-md) 0;
+                padding: 0 var(--space-md);
+            }
+            .back-to-list-btn {
+                padding: 16px 24px;
+                font-size: 0.9rem;
+                letter-spacing: 1.5px;
+            }
+            .back-to-list-btn .back-icon {
+                width: 16px;
+                height: 16px;
+            }
+        }
+        /*
+           ソーシャル・その他機能 - 商品詳細ページ
+ */
+        .social-share {
+            margin-bottom: 40px;
+        }
+        .social-share button,
+        .social-share a {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--secondary-text);
+            padding: 8px 16px;
+            font-size: var(--font-xs);
+            font-weight: var(--weight-light);
+            letter-spacing: 1px;
+            text-decoration: none;
+            transition: all var(--transition-fast);
+            display: inline-block;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            font-family: 'Noto Sans', Arial, sans-serif;
+            border-radius: 0;
+        }
+        .social-share button:hover,
+        .social-share a:hover {
+            border-color: var(--accent-color);
+            color: var(--primary-text);
+        }
+        /* 商品注意書き・違法報告 */
+        .item-attention,
+        .illegal-report {
+            margin-bottom: 20px;
+            font-size: 0.8rem;
+            color: var(--muted-text);
+            line-height: 1.4;
+        }
+        .item-attention p,
+        .illegal-report p {
+            margin: 0;
+            font-weight: var(--weight-light);
+        }
+        .illegal-report a {
+            color: var(--secondary-text);
+            text-decoration: underline;
+        }
+        .illegal-report a:hover {
+            color: var(--primary-text);
+        }
+        /*
+           Aboutページ - 画像とSNSリンクのみのシンプルデザイン
+ */
+        .about-page {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 0 40px;
+        text-align: center;
+        }
+        .about-image {
+            margin-bottom: 60px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .about-image img {
+            width: 100%;
+            height: auto;
+            aspect-ratio: 3 / 4;
+            object-fit: cover;
+            border-radius: 8px;
+            transition: transform var(--transition-normal);
+        }
+        .about-image img:hover {
+            transform: scale(1.02);
+        }
+        .about-social {
+            display: flex;
+            justify-content: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .about-social .social-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: var(--secondary-text);
+            text-decoration: none;
+            font-family: 'Noto Sans', Arial, sans-serif;
+            font-size: var(--font-sm);
+            font-weight: var(--weight-light);
+            letter-spacing: 1px;
+            padding: 16px 24px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            transition: all var(--transition-fast);
+        }
+        .about-social .social-link:hover {
+            color: var(--primary-text);
+            border-color: var(--accent-color);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 56, 131, 0.2);
+        }
+        .about-social .social-link svg {
+            width: 20px;
+            height: 20px;
+            fill: currentColor;
+        }
+        /*
+           特定商取引法・プライバシーポリシーページ
+ */
+        .page-content {
+            max-width: 800px;
+            margin: 80px auto;
+            padding: 0 40px;
+            line-height: 1.8;
+        }
+        .page-content h1 {
+            font-size: var(--font-xl);
+            font-weight: var(--weight-normal);
+            letter-spacing: 2px;
+            margin-bottom: 40px;
+            color: var(--primary-text);
+            text-align: center;
+            text-transform: uppercase;
+        }
+        .page-content h2 {
+            font-size: var(--font-lg);
+            font-weight: var(--weight-normal);
+            letter-spacing: 1px;
+            margin: 40px 0 20px 0;
+            color: var(--primary-text);
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 8px;
+        }
+        .page-content h3 {
+            font-size: var(--font-md);
+            font-weight: var(--weight-normal);
+            letter-spacing: 0.5px;
+            margin: 30px 0 15px 0;
+            color: var(--primary-text);
+        }
+        .page-content p {
+            font-size: var(--font-xs);
+            color: var(--secondary-text);
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-weight: var(--weight-light);
+        }
+        .page-content ul,
+        .page-content ol {
+            font-size: var(--font-xs);
+            color: var(--secondary-text);
+            margin-bottom: 20px;
+            padding-left: 24px;
+            line-height: 1.8;
+            font-weight: var(--weight-light);
+        }
+        .page-content li {
+            margin-bottom: 8px;
+        }
+        .page-content table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: var(--font-xs);
+            color: var(--secondary-text);
+        }
+        .page-content table th,
+        .page-content table td {
+            border: 1px solid var(--border-color);
+            padding: 12px 16px;
+            text-align: left;
+            line-height: 1.6;
+        }
+        .page-content table th {
+            background-color: rgba(255, 255, 255, 0.05);
+            font-weight: var(--weight-normal);
+            color: var(--primary-text);
+        }
+        .page-content a {
+            color: var(--accent-color);
+            text-decoration: underline;
+            transition: color var(--transition-fast);
+        }
+        .page-content a:hover {
+            color: var(--primary-text);
+        }
+        .page-content strong,
+        .page-content b {
+            color: var(--primary-text);
+            font-weight: var(--weight-normal);
+        }
+        .page-content em,
+        .page-content i {
+            font-style: italic;
+            color: var(--primary-text);
+        }
+        /* 連絡先情報のスタイル */
+        .page-content .contact-info {
+            background-color: rgba(255, 255, 255, 0.02);
+            border: 1px solid var(--border-color);
+            padding: 24px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .page-content .contact-info p {
+            margin-bottom: 8px;
+        }
+        .page-content .contact-info strong {
+            color: var(--primary-text);
+        }
+        /* 日本語法的文書の特殊スタイル */
+        .page-content .legal-section {
+            margin: 30px 0;
+            padding: 20px 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .page-content .legal-section:first-child {
+            border-top: none;
+            padding-top: 0;
+        }
+        .page-content .legal-number {
+            color: var(--accent-color);
+            font-weight: var(--weight-normal);
+            margin-right: 8px;
+        }
+        .page-content .legal-term {
+            color: var(--primary-text);
+            font-weight: var(--weight-normal);
+            margin-bottom: 12px;
+        }
+        .page-content .legal-definition {
+            color: var(--secondary-text);
+            font-size: 0.85rem;
+            margin-left: 16px;
+            margin-bottom: 8px;
+        }
+        /* 更新日時等の情報 */
+        .page-content .page-meta {
+            text-align: center;
+            margin: 40px 0 20px 0;
+            padding: 16px;
+            background-color: rgba(255, 255, 255, 0.02);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            color: var(--muted-text);
+        }
+        /* 重要事項のハイライト */
+        .page-content .important-notice {
+            background-color: rgba(212, 56, 131, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 16px 20px;
+            margin: 20px 0;
+            border-radius: 0 4px 4px 0;
+        }
+        .page-content .important-notice p {
+            color: var(--primary-text);
+            margin-bottom: 8px;
+        }
+        .page-content .important-notice:last-child {
+            margin-bottom: 0;
+        }
+        /*
+           LOOKBOOKページ（ブログ）専用スタイル
+ */
+        /* ブログページのタイトル */
+        {block:BlogPage}
+        .page-content h1 {
+            font-size: 2.5rem;
+            font-weight: var(--weight-light);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            letter-spacing: 4px;
+            margin-bottom: 60px;
+            color: var(--primary-text);
+            text-align: center;
+            text-transform: uppercase;
+        }
+        /* LOOKBOOKページ全体のフォント統一 */
+        .page-content,
+        .page-content * {
+            font-family: 'Noto Sans', Arial, sans-serif !important;
+        }
+        /* ブログ記事一覧のスタイル */
+        .page-content .blog-posts {
+            display: grid;
+            gap: 40px;
+            margin-top: 40px;
+        }
+        .page-content .blog-post {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 40px;
+            margin-bottom: 40px;
+        }
+        .page-content .blog-post:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .page-content .blog-post-title {
+            font-size: var(--font-lg);
+            font-weight: var(--weight-normal);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            letter-spacing: 1px;
+            margin-bottom: 16px;
+            color: var(--primary-text);
+        }
+        .page-content .blog-post-date {
+            font-size: var(--font-xs);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            color: var(--muted-text);
+            margin-bottom: 20px;
+            font-weight: var(--weight-light);
+        }
+        .page-content .blog-post-excerpt {
+            font-size: var(--font-xs);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            color: var(--secondary-text);
+            line-height: 1.7;
+            margin-bottom: 20px;
+        }
+        .page-content .blog-post-image {
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .page-content .blog-post-image img {
+            width: 100%;
+            height: auto;
+            display: block;
+            transition: transform var(--transition-normal);
+        }
+        .page-content .blog-post-image:hover img {
+            transform: scale(1.02);
+        }
+        .page-content .blog-read-more {
+            display: inline-block;
+            color: var(--accent-color);
+            text-decoration: none;
+            font-size: var(--font-xs);
+            font-weight: var(--weight-light);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 8px 0;
+            border-bottom: 1px solid transparent;
+            transition: border-color var(--transition-fast);
+        }
+        .page-content .blog-read-more:hover {
+            border-bottom-color: var(--accent-color);
+        }
+        /* ソーシャルメディア共有ボタンを非表示 */
+        .page-content .social-share,
+        .page-content .share-buttons,
+        .page-content .sns-share,
+        .page-content .blog-share,
+        .page-content .social-buttons,
+        .page-content [class*="share"],
+        .page-content [class*="social"],
+        .page-content .tiktok-share-button,
+        .page-content .facebook-share-button,
+        .page-content .line-share-button,
+        .page-content a[href*="tiktok.com"],
+        .page-content a[href*="facebook.com/sharer"],
+        .page-content a[href*="line.me/R/msg"],
+        .page-content iframe[src*="tiktok.com"],
+        .page-content iframe[src*="facebook.com"] {
+            display: none !important;
+            visibility: hidden !important;
+        }
+        /* BASEデフォルトの共有ボタンクラスも対象 */
+        .page-content .base-share-buttons,
+        .page-content .base-social-share,
+        .page-content .blog-post-share,
+        .page-content .entry-share {
+            display: none !important;
+        }
+        {/block:BlogPage}
+        /*
+           特定商取引法・プライバシーポリシーページ - モバイル対応
+ */
+        @media (max-width: 768px) {
+            .page-content {
+                margin: 60px auto;
+                padding: 0 20px;
+            }
+            .page-content h1 {
+                font-size: var(--font-lg);
+                letter-spacing: 1px;
+                margin-bottom: 30px;
+            }
+            .page-content h2 {
+                font-size: var(--font-md);
+                margin: 30px 0 16px 0;
+            }
+            .page-content h3 {
+                font-size: var(--font-sm);
+                margin: 24px 0 12px 0;
+            }
+            .page-content p {
+                font-size: 0.7rem;
+                margin-bottom: 16px;
+                line-height: 1.7;
+            }
+            .page-content ul,
+            .page-content ol {
+                font-size: 0.7rem;
+                padding-left: 20px;
+                margin-bottom: 16px;
+            }
+            .page-content li {
+                margin-bottom: 6px;
+                font-size: 0.7rem;
+            }
+            .page-content table {
+                font-size: 0.65rem;
+                margin: 16px 0;
+            }
+            .page-content table th,
+            .page-content table td {
+                padding: 8px 12px;
+                line-height: 1.5;
+            }
+            .page-content .contact-info {
+                padding: 16px;
+                margin: 16px 0;
+            }
+            /* テーブルの横スクロール対応 */
+            .page-content table {
+                display: block;
+                width: 100%;
+                overflow-x: auto;
+                white-space: nowrap;
+            }
+            .page-content table thead,
+            .page-content table tbody,
+            .page-content table tr {
+                display: table;
+                width: 100%;
+                table-layout: fixed;
+            }
+            .page-content table th,
+            .page-content table td {
+                white-space: normal;
+                word-wrap: break-word;
+            }
+            /* LOOKBOOKページ（ブログ）モバイル対応 */
+            {block:BlogPage}
+            .page-content h1 {
+                font-size: 2rem;
+                font-weight: var(--weight-light);
+                letter-spacing: 2px;
+                margin-bottom: 40px;
+            }
+            .page-content .blog-post {
+                padding-bottom: 30px;
+                margin-bottom: 30px;
+            }
+            .page-content .blog-post-title {
+                font-size: var(--font-md);
+                margin-bottom: 12px;
+            }
+            .page-content .blog-post-date {
+                font-size: 0.75rem;
+                margin-bottom: 16px;
+            }
+            .page-content .blog-post-excerpt {
+                font-size: 0.8rem;
+                margin-bottom: 16px;
+            }
+            .page-content .blog-read-more {
+                font-size: 0.75rem;
+            }
+            {/block:BlogPage}
+            /* Aboutページモバイル対応 */
+            .about-page {
+                margin: 60px auto;
+                padding: 0 20px;
+            }
+            .about-image {
+                margin-bottom: 40px;
+            }
+            .about-image img {
+                border-radius: 4px;
+            }
+            .about-social {
+                gap: 20px;
+            }
+            .about-social .social-link {
+                font-size: var(--font-xs);
+                padding: 12px 20px;
+                gap: 8px;
+            }
+            .about-social .social-link svg {
+                width: 16px;
+                height: 16px;
+            }
+        }
+        /* タイトルとコンテンツ */
+        .contact-form h1,
+        .page-content h1 {
+            font-size: 2.5rem;
+            font-weight: var(--weight-light);
+            letter-spacing: 4px;
+            margin-bottom: 60px;
+            color: var(--primary-text);
+            text-transform: uppercase;
+            text-align: center;
+        }
+        /* BASEページブロック機能を活用したコンタクト専用スタイル */
+        {block:ContactPage}
+        .contact-form h1::after,
+        .page-content h1::after {
+            content: "horylabelをご利用頂きありがとうございます。\A\A各種お問い合わせは下記のフォームよりご連絡ください。\A\A内容によっては回答をさしあげるのにお時間をいただくこともございます。\A\Aまた、休業日は翌営業日以降の対応となりますのでご了承ください。\A\Aメールアドレスに誤りがある場合はご回答が出来かねますので、誤入力にはお気を付けくださいますようお願い致します。";
+            display: block;
+            white-space: pre-line;
+            font-size: var(--font-xs);
+            font-weight: var(--weight-light);
+            color: var(--secondary-text);
+            text-transform: none;
+            letter-spacing: 0;
+            line-height: 1.8;
+            margin-top: 40px;
+            margin-bottom: 40px;
+            text-align: left;
+        }
+        {/block:ContactPage}
+        .contact-form .intro-text,
+        .page-content .intro-text {
+            display: none;
+        }
+        .contact-form p,
+        .page-content p {
+            font-size: var(--font-xs);
+            color: var(--secondary-text);
+            margin-bottom: 20px;
+            line-height: 1.8;
+            font-weight: var(--weight-light);
+        }
+        /* フォームフィールド統合スタイル */
+        .contact-form .form-field,
+        .page-content .form-field {
+            position: relative;
+            margin-bottom: var(--form-field-margin);
+        }
+        /* 入力フィールド共通スタイル */
+        .contact-form input[type="text"],
+        .contact-form input[type="email"],
+        .contact-form input[type="tel"],
+        .contact-form select,
+        .contact-form textarea,
+        .page-content input[type="text"],
+        .page-content input[type="email"],
+        .page-content input[type="tel"],
+        .page-content select,
+        .page-content textarea {
+            width: 100%;
+            padding: var(--form-padding);
+            border: 1px solid var(--muted-text);
+            border-radius: 0;
+            background-color: transparent;
+            color: var(--primary-text);
+            font-size: var(--font-sm);
+            font-weight: var(--weight-light);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            transition: border-color var(--transition-fast);
+            box-sizing: border-box;
+        }
+        /* フォーカス時共通スタイル */
+        .contact-form input:focus,
+        .contact-form select:focus,
+        .contact-form textarea:focus,
+        .page-content input:focus,
+        .page-content select:focus,
+        .page-content textarea:focus {
+            outline: none;
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 1px var(--accent-color);
+        }
+        /* プレースホルダーとセレクトボックス */
+        .contact-form input::placeholder,
+        .contact-form textarea::placeholder,
+        .page-content input::placeholder,
+        .page-content textarea::placeholder {
+            color: var(--muted-text);
+            font-weight: var(--weight-light);
+        }
+        /* セレクトボックス専用スタイル */
+        .contact-form select,
+        .page-content select {
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            cursor: pointer;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 192 192'%3e%3cpath d='m72 36 60 60-60 60' stroke='%23999' stroke-linecap='round' stroke-linejoin='round'/%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: right 0 center;
+            background-size: 20px;
+            padding-right: 30px;
+        }
+        .contact-form select:invalid,
+        .page-content select:invalid {
+            color: var(--muted-text);
+        }
+        .contact-form select:valid,
+        .page-content select:valid {
+            color: var(--primary-text);
+        }
+        /* テキストエリア専用設定 */
+        .contact-form textarea,
+        .page-content textarea {
+            min-height: 200px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        /*
+           フォーム共通設定
+ */
+        /* フォームコンテナ基本設定 */
+        .contact-form,
+        .page-content form {
+            max-width: 600px;
+            margin: 80px auto;
+            padding: 0 40px;
+        }
+        /* デスクトップ時のラベルと疑似要素は非表示 */
+        .contact-form label,
+        .page-content label,
+        .contact-form input::before,
+        .contact-form select::before,
+        .contact-form textarea::before,
+        .page-content input::before,
+        .page-content select::before,
+        .page-content textarea::before {
+            display: none;
+        }
+        .contact-form .required::after,
+        .page-content .required::after {
+            content: " *";
+            color: var(--accent-color);
+        }
+        /* 送信ボタン統合スタイル */
+        .contact-form button[type="submit"],
+        .contact-form input[type="submit"],
+        .page-content button[type="submit"],
+        .page-content input[type="submit"] {
+            width: auto;
+            min-width: 160px;
+            background-color: #f8f8f8;
+            color: #000000;
+            border: 1px solid #e0e0e0;
+            padding: 18px 40px;
+            font-size: 0;
+            font-weight: var(--weight-bold);
+            letter-spacing: 2px;
+            text-transform: none;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            border-radius: 0;
+            margin-top: 40px;
+        }
+        .contact-form button[type="submit"]::before,
+        .contact-form input[type="submit"]::before,
+        .page-content button[type="submit"]::before,
+        .page-content input[type="submit"]::before {
+            content: "確認する";
+            font-size: var(--font-sm);
+        }
+        .contact-form button[type="submit"]:hover,
+        .contact-form input[type="submit"]:hover,
+        .page-content button[type="submit"]:hover,
+        .page-content input[type="submit"]:hover {
+            background-color: #e8e8e8;
+            border-color: #d0d0d0;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .contact-form button[type="submit"]:active,
+        .contact-form input[type="submit"]:active,
+        .page-content button[type="submit"]:active,
+        .page-content input[type="submit"]:active {
+            transform: translateY(0);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+        /* フォームグループ */
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+        }
+        /*
+           CONTACTページ - モバイル対応
+ */
+        @media (max-width: 768px) {
+            .contact-form,
+            .page-content form {
+                margin: 60px auto;
+                padding: 0 20px;
+            }
+            .contact-form h1,
+            .page-content h1 {
+                font-size: 2rem;
+                font-weight: var(--weight-light);
+                letter-spacing: 2px;
+                margin-bottom: 40px;
+            }
+            {block:ContactPage}
+            .contact-form h1::after,
+            .page-content h1::after {
+                margin-top: 30px;
+                margin-bottom: 40px;
+                font-size: 0.8rem;
+            }
+            {/block:ContactPage}
+            /* BASEのフォーム構造に対応したモバイル調整 */
+            .contact-form,
+            .page-content form {
+                position: relative;
+                text-align: center;
+            }
+            /* フォームコンテナの完全リセット */
+            .contact-form,
+            .page-content form,
+            .page-content {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                padding-left: 20px !important;
+                padding-right: 20px !important;
+                position: relative !important;
+                overflow: visible !important;
+            }
+            /* フォーム内の不要なスタイルをリセット */
+            .contact-form *,
+            .page-content form * {
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                float: none !important;
+                position: static !important;
+            }
+            /* ラベルのテキストは中央配置 */
+            .contact-form label,
+            .page-content form label {
+                text-align: center !important;
+            }
+            /* フォーム要素全体の間隔調整 */
+            .contact-form input,
+            .contact-form select,
+            .contact-form textarea,
+            .page-content input,
+            .page-content select,
+            .page-content textarea {
+                margin-bottom: 50px;
+                position: relative;
+            }
+            /* ラベルが存在する場合のスタイル - 強制中央配置 */
+            .contact-form label,
+            .page-content label {
+                display: block !important;
+                text-align: center !important;
+                font-size: 0.9rem !important;
+                color: var(--primary-text) !important;
+                font-weight: var(--weight-normal) !important;
+                margin: 0 auto 16px auto !important;
+                letter-spacing: 0.5px !important;
+                width: 100% !important;
+                position: relative !important;
+                left: 0 !important;
+                right: 0 !important;
+            }
+            /* 1番目のinput（名前）のタイトル */
+            .contact-form input:nth-of-type(1)::before,
+            .page-content input:nth-of-type(1)::before {
+                content: "お名前(必須)";
+                position: absolute;
+                top: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: block;
+                text-align: center;
+                font-size: 0.9rem;
+                color: var(--primary-text);
+                font-weight: var(--weight-normal);
+                letter-spacing: 0.5px;
+                white-space: nowrap;
+                width: 100%;
+                z-index: 1;
+            }
+            /* 2番目のinput（メール）のタイトル */
+            .contact-form input:nth-of-type(2)::before,
+            .page-content input:nth-of-type(2)::before {
+                content: "メールアドレス(必須)";
+                position: absolute;
+                top: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: block;
+                text-align: center;
+                font-size: 0.9rem;
+                color: var(--primary-text);
+                font-weight: var(--weight-normal);
+                letter-spacing: 0.5px;
+                white-space: nowrap;
+                width: 100%;
+                z-index: 1;
+            }
+            /* 3番目のinput（注文番号）のタイトル */
+            .contact-form input:nth-of-type(3)::before,
+            .page-content input:nth-of-type(3)::before {
+                content: "注文ID";
+                position: absolute;
+                top: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: block;
+                text-align: center;
+                font-size: 0.9rem;
+                color: var(--primary-text);
+                font-weight: var(--weight-normal);
+                letter-spacing: 0.5px;
+                white-space: nowrap;
+                width: 100%;
+                z-index: 1;
+            }
+            /* セレクトボックスのタイトル */
+            .contact-form select::before,
+            .page-content select::before {
+                content: "お問い合わせ種別";
+                position: absolute;
+                top: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: block;
+                text-align: center;
+                font-size: 0.9rem;
+                color: var(--primary-text);
+                font-weight: var(--weight-normal);
+                letter-spacing: 0.5px;
+                white-space: nowrap;
+                width: 100%;
+                z-index: 1;
+            }
+            /* テキストエリアのタイトル */
+            .contact-form textarea::before,
+            .page-content textarea::before {
+                content: "お問い合わせ内容(必須)";
+                position: absolute;
+                top: -35px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: block;
+                text-align: center;
+                font-size: 0.9rem;
+                color: var(--primary-text);
+                font-weight: var(--weight-normal);
+                letter-spacing: 0.5px;
+                white-space: nowrap;
+                width: 100%;
+                z-index: 1;
+            }
+            /* 最初のフォーム要素にトップマージンを追加 */
+            .contact-form input:first-of-type,
+            .page-content input:first-of-type {
+                margin-top: 40px;
+            }
+            /* モバイル時のプレースホルダーをフィールドタイトルとして活用 */
+            .contact-form input::placeholder,
+            .contact-form textarea::placeholder,
+            .contact-form select,
+            .page-content input::placeholder,
+            .page-content textarea::placeholder,
+            .page-content select {
+                color: var(--primary-text) !important;
+                font-size: 0.9rem !important;
+                font-weight: var(--weight-normal) !important;
+                text-align: center !important;
+            }
+            /* BASE特有のクラス名への対応 */
+            .page-content p,
+            .page-content div,
+            .page-content span,
+            .contact-form p,
+            .contact-form div,
+            .contact-form span {
+                text-align: center !important;
+            }
+            /* フォームのすべてのテキストを中央配置 */
+            .page-content form label,
+            .contact-form label,
+            .page-content form p,
+            .contact-form p {
+                text-align: center !important;
+                width: 100% !important;
+                display: block !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+            }
+            /* セレクトボックスのデフォルトオプションスタイル */
+            .contact-form select option:first-child,
+            .page-content select option:first-child {
+                color: var(--primary-text);
+                font-weight: var(--weight-normal);
+            }
+            /* フォーム要素の完全中央配置 - 強制リセット */
+            .contact-form,
+            .page-content form {
+                display: block !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 20px !important;
+                box-sizing: border-box !important;
+            }
+            /* すべてのフォーム要素を強制的に中央配置 */
+            .contact-form input,
+            .contact-form select,
+            .contact-form textarea,
+            .contact-form button,
+            .page-content input,
+            .page-content select,
+            .page-content textarea,
+            .page-content button {
+                display: block !important;
+                margin: 0 auto 50px auto !important;
+                width: calc(100% - 0px) !important;
+                max-width: 100% !important;
+                left: 0 !important;
+                right: 0 !important;
+                position: relative !important;
+                transform: none !important;
+            }
+            /* BASEの特定要素への対応 */
+            .contact-form div,
+            .contact-form p,
+            .page-content form div,
+            .page-content form p {
+                width: 100% !important;
+                margin-left: 0 !important;
+                margin-right: 0 !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+            }
+            /* 疑似クラスでタイトル表示を試行（対応ブラウザのみ） */
+            .contact-form input:nth-of-type(1):not(:placeholder-shown)::before,
+            .page-content input:nth-of-type(1):not(:placeholder-shown)::before {
+                content: "お名前(必須)" !important;
+            }
+            /* モバイル時のフィールドを強制中央配置＋4角線ボーダー */
+            .contact-form input[type="text"],
+            .contact-form input[type="email"],
+            .contact-form input[type="tel"],
+            .contact-form select,
+            .page-content input[type="text"],
+            .page-content input[type="email"],
+            .page-content input[type="tel"],
+            .page-content select {
+                padding: 12px 16px !important;
+                font-size: 0.9rem !important;
+                margin: 0 auto 50px auto !important;
+                width: 100% !important;
+                max-width: none !important;
+                border: 1px solid var(--muted-text) !important;
+                border-radius: 0 !important;
+                background-color: transparent !important;
+                color: var(--primary-text) !important;
+                display: block !important;
+                box-sizing: border-box !important;
+                text-align: left !important;
+                position: static !important;
+                left: auto !important;
+                right: auto !important;
+                transform: none !important;
+                float: none !important;
+                clear: both !important;
+            }
+            /* フォーカス時のアクセントカラー */
+            .contact-form input[type="text"]:focus,
+            .contact-form input[type="email"]:focus,
+            .contact-form input[type="tel"]:focus,
+            .contact-form select:focus,
+            .page-content input[type="text"]:focus,
+            .page-content input[type="email"]:focus,
+            .page-content input[type="tel"]:focus,
+            .page-content select:focus {
+                border: 1px solid var(--accent-color) !important;
+                outline: none !important;
+                box-shadow: 0 0 0 1px var(--accent-color) !important;
+            }
+            .contact-form textarea,
+            .page-content textarea {
+                min-height: 150px !important;
+                padding: 16px !important;
+                font-size: 0.9rem !important;
+                margin: 0 auto 50px auto !important;
+                width: 100% !important;
+                max-width: none !important;
+                border: 1px solid var(--muted-text) !important;
+                border-radius: 0 !important;
+                background-color: transparent !important;
+                color: var(--primary-text) !important;
+                display: block !important;
+                box-sizing: border-box !important;
+                text-align: left !important;
+                position: static !important;
+                left: auto !important;
+                right: auto !important;
+                transform: none !important;
+                float: none !important;
+                clear: both !important;
+            }
+            /* テキストエリアフォーカス時のアクセントカラー */
+            .contact-form textarea:focus,
+            .page-content textarea:focus {
+                border: 1px solid var(--accent-color) !important;
+                outline: none !important;
+                box-shadow: 0 0 0 1px var(--accent-color) !important;
+            }
+            .contact-form button[type="submit"],
+            .contact-form input[type="submit"],
+            .page-content button[type="submit"],
+            .page-content input[type="submit"] {
+                padding: 16px 32px;
+                min-width: 140px;
+                font-size: 0.9rem;
+                margin-top: 50px;
+                background-color: #f8f8f8;
+                color: #000000;
+                border: 1px solid #e0e0e0;
+            }
+        }
+            .contact-form label,
+            .page-content label {
+                font-size: 0.9rem;
+                margin-bottom: 12px;
+            }
+            .contact-form button[type="submit"],
+            .contact-form input[type="submit"],
+            .page-content button[type="submit"],
+            .page-content input[type="submit"] {
+                width: 100%;
+                padding: 16px 30px;
+                font-size: 0.9rem;
+                letter-spacing: 2px;
+                margin-top: 30px;
+            }
+            .form-row {
+                grid-template-columns: 1fr;
+                gap: 0;
+            }
+        }
+        /*
+           BASE標準フォーム要素の追加スタイリング（CONTACTページ以外）
+ */
+        /* 汎用フォームスタイル - 商品購入フォーム等で適用 */
+        .product-purchase input[type="text"],
+        .product-purchase input[type="email"],
+        .product-purchase input[type="tel"],
+        .product-purchase input[type="password"],
+        .product-purchase textarea,
+        .product-purchase select,
+        .search-form input[type="text"],
+        .search-form input[type="email"],
+        .newsletter-form input[type="email"] {
+            width: 100%;
+            padding: 16px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            background-color: var(--primary-bg);
+            color: var(--primary-text);
+            font-size: var(--font-xs);
+            font-weight: var(--weight-light);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            transition: border-color var(--transition-fast);
+            box-sizing: border-box;
+        }
+        .product-purchase input:focus,
+        .product-purchase textarea:focus,
+        .product-purchase select:focus,
+        .search-form input:focus,
+        .newsletter-form input:focus {
+            outline: none;
+            border-color: var(--accent-color);
+        }
+        .product-purchase input::placeholder,
+        .product-purchase textarea::placeholder,
+        .search-form input::placeholder,
+        .newsletter-form input::placeholder {
+            color: var(--muted-text);
+            font-weight: var(--weight-light);
+        }
+        .product-purchase textarea {
+            min-height: 120px;
+            resize: vertical;
+            line-height: 1.6;
+        }
+        /* 商品購入以外のフォームボタン */
+        .search-form button,
+        .newsletter-form button,
+        .login-form button {
+            background-color: #f8f8f8;
+            color: #000;
+            border: 1px solid #e0e0e0;
+            padding: 18px 24px;
+            font-size: var(--font-sm);
+            font-weight: var(--weight-normal);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-family: 'Noto Sans', Arial, sans-serif;
+            border-radius: 0;
+            margin-top: 8px;
+        }
+        .search-form button:hover,
+        .newsletter-form button:hover,
+        .login-form button:hover {
+            background-color: #e8e8e8;
+            border-color: #d0d0d0;
+            transform: translateY(-1px);
+        }
+        .search-form button:active,
+        .newsletter-form button:active,
+        .login-form button:active {
+            transform: translateY(0);
+        }
+        /* ラベル（日本語表示にも対応） */
+        .product-purchase label,
+        .search-form label,
+        .newsletter-form label {
+            display: block;
+            font-size: var(--font-xs);
+            color: var(--secondary-text);
+            margin-bottom: 8px;
+            font-weight: var(--weight-light);
+            letter-spacing: 0.5px;
+        }
+        /* エラーメッセージ */
+        .error-message,
+        .form-error {
+            color: var(--error-color);
+            font-size: 0.8rem;
+            margin-top: -12px;
+            margin-bottom: 16px;
+            font-weight: var(--weight-light);
+        }
+        /* 成功メッセージ */
+        .success-message,
+        .form-success {
+            color: var(--accent-color);
+            font-size: var(--font-xs);
+            margin-bottom: 16px;
+            font-weight: var(--weight-light);
+        }
+        /* フッター */
+        .footer {
+            border-top: 1px solid var(--border-color);
+            padding: 40px 20px;
+            text-align: center;
+        }
+        .footer-links {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 40px;
+            margin-bottom: 30px;
+    }
+        .footer-links a {
+            font-size: var(--font-xs);
+            letter-spacing: 1px;
+            color: var(--muted-text);
+            text-transform: uppercase;
+            font-weight: var(--weight-light);
+            transition: color var(--transition-fast);
+            white-space: nowrap;
+        }
+        .footer-links a:hover {
+            color: var(--primary-text);
+        }
+        /* LEGAL INFORMATIONを中央基準に */
+        .footer-links a:nth-child(2) {
+            position: relative;
+            font-weight: var(--weight-normal);
+        }
+        .copyright {
+            font-size: 0.8rem;
+            color: var(--muted-text);
+            letter-spacing: 1px;
+            font-weight: var(--weight-light);
+            text-align: center;
+            margin: 0 auto;
+        }
+        /* モバイル対応 */
+        @media (max-width: 768px) {
+            .footer {
+                padding: 30px 15px;
+            }
+            .footer-links {
+                flex-direction: column;
+                gap: 20px;
+                margin-bottom: 25px;
+            }
+            .footer-links a {
+                font-size: 0.9rem;
+            }
+            .copyright {
+                font-size: 0.7rem;
+            }
+        }
+        /* タブレット対応 */
+        @media (max-width: 480px) {
+            .footer-links {
+                gap: 15px;
+            }
+            .footer-links a {
+                font-size: 0.8rem;
+                letter-spacing: 0.5px;
+            }
+        }
+        /*
+           レスポンシブ・メディアクエリ統合
+ */
+        /* モバイル（768px以下） */
+        @media (max-width: 768px) {
+            /* メイン画像レスポンシブ制御 */
+            .hero-image-desktop { display: none; }
+            .hero-image-mobile { display: block; }
+            .overlay-text {
+                font-size: 3.2rem;
+                left: var(--space-lg);
+                bottom: var(--space-lg);
+            }
+            /* 商品詳細ページ */
+            .product-detail {
+                grid-template-columns: 1fr;
+                gap: var(--space-lg);
+                margin: var(--space-lg) auto;
+                padding: 0 var(--space-md);
+            }
+            /* ナビゲーション要素 */
+            button.humberger {
+                top: calc(var(--information-banner-height, 0px) + 15px);
+                left: 15px;
+            }
+            .logo {
+                top: calc(var(--information-banner-height, 0px) + 15px);
+                max-width: 150px;
+                font-size: var(--font-md);
+                letter-spacing: 2px;
+            }
+            .logo img { max-height: 30px; }
+            .logo a:not(:has(img)) {
+                font-size: var(--font-md);
+                letter-spacing: 2px;
+            }
+            .header__nav-area {
+                width: 100%;
+                padding: var(--space-xl) var(--space-md);
+                left: -100%;
+                transform: translateX(-100%);
+                opacity: 0;
+                visibility: hidden;
+            }
+            .header__nav-area.-active {
+                left: 0;
+                transform: translateX(0);
+            }
+            .global-navigation__list > li > a {
+                font-size: var(--font-lg);
+                font-weight: var(--weight-light);
+            }
+            /* Instagram固定ボタン */
+            .instagram-fixed-btn {
+                bottom: var(--space-md);
+                right: var(--space-md);
+                width: 40px;
+                height: 40px;
+                border: none;
+                background-color: transparent;
+            }
+            .instagram-fixed-btn svg {
+                width: 24px;
+                height: 24px;
+                fill: #666666;
+            }
+            /* 商品セクション・グリッド（モバイル） */
+            .product-section {
+                padding: 0 12px;
+            }
+            .product-grid {
+                gap: 8px;
+                padding: 0;
+                margin: 0;
+                width: 100%;
+            }
+        }
+        /* タブレット（768px以上） */
+        @media (min-width: 768px) {
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        /* デスクトップ（1024px以上） */
+        @media (min-width: 1024px) {
+            .product-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        /*
+           ローディング・状態管理
+ */
+        .loading {
+            opacity: 0;
+            transition: opacity var(--transition-fast);
+        }
+        .loaded {
+            opacity: 1;
+        }
+        /*
+           BASE固有スタイル調整・ページコンテンツ
+ */
+        #privacy,
+        #law {
+            background-color: var(--primary-bg) !important;
+            color: var(--primary-text) !important;
+            padding: var(--space-lg) !important;
+        }
+        #privacy h2,
+        #law h2 {
+            color: var(--primary-text) !important;
+        }
+        .page-content {
+            padding: var(--space-xl) var(--space-lg);
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        .page-content h1,
+        .page-content h2,
+        .page-content h3 {
+            color: var(--primary-text) !important;
+            margin-bottom: var(--space-md);
+        }
+        .page-content p {
+            color: var(--secondary-text) !important;
+            line-height: 1.6;
+            margin-bottom: var(--space-sm);
+        }
+        /*
+           Ajax読み込みボタン・その他UI要素
+ */
+        .load-more-btn {
+            display: block;
+            margin: var(--space-lg) auto;
+            padding: 15px var(--space-lg);
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--primary-text);
+            font-size: var(--font-xs);
+            letter-spacing: 1px;
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            font-weight: var(--weight-light);
+        }
+        .load-more-btn:hover {
+            border-color: var(--primary-text);
+            background-color: var(--primary-text);
+            color: var(--primary-bg);
+        }
+        .category-nav {
+            display: none; /* サイドメニューに統合するため非表示 */
+        }
+        .appsItemLabelTag {
+            z-index: var(--z-banner);
+        }
+        /* 情報バナー対応 */
+        #i18 {
+            z-index: var(--z-banner);
+            left: var(--space-xs);
+            position: fixed;
+            top: calc(var(--information-banner-height, 0px) + var(--space-xs));
+        }
+        /*
+           Instagram固定ボタン（ホーム画面のみ右下表示）
+ */
+        .instagram-fixed-btn {
+            display: none;
+            position: fixed;
+            bottom: var(--space-lg);
+            right: var(--space-lg);
+            width: 50px;
+            height: 50px;
+            background-color: transparent;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            z-index: var(--z-header);
+            transition: all var(--transition-fast);
+            align-items: center;
+            justify-content: center;
+        }
+        /* Instagram固定ボタンのレスポンシブ対応 */
+        @media (max-width: 768px) {
+            .instagram-fixed-btn {
+                bottom: var(--space-lg);
+                right: 15px;
+                width: 40px;
+                height: 40px;
+            }
+        }
+        .instagram-fixed-btn:hover {
+            transform: scale(1.1);
+            opacity: 0.7;
+        }
+        .instagram-fixed-btn svg {
+            width: 28px;
+            height: 28px;
+            fill: #666666;
+        }
+        /* ホーム画面でのみ表示 */
+        .home-page .instagram-fixed-btn {
+            display: flex;
+        }
+    </style>
+</head>
+<body id="{block:IndexPage}shopTopPage{/block:IndexPage}{block:ItemPage}shopDetailPage{/block:ItemPage}" class="shop template loading">
+    <!-- BASE情報バナー -->
+{block:AppsInformationBanner}
+    {AppsInformationBannerTag}
+    <script type="text/javascript">
+        window.addEventListener('DOMContentLoaded', function() {
+            const banner = document.getElementsByClassName('informationBanner');
+            if (!banner || banner.length === 0) return;
+            const resizeObserver = new ResizeObserver(entries => {
+                for (let entry of entries) {
+                    const bannerHeight = entry.target.offsetHeight;
+                    document.documentElement.style.setProperty("--information-banner-height", bannerHeight + 'px');
+                }
+            });
+            resizeObserver.observe(banner[0]);
+        });
+    </script>
+{/block:AppsInformationBanner}
+    <!-- BASE多言語対応 -->
+{block:AppsI18n}{AppsI18nTag}{/block:AppsI18n}
+    <!-- BASEメニュー（必須） -->
+    <div class="base-menu-container">
+{BASEMenuTag}
+                            </div>
+    <!-- ハンバーガーメニュー -->
+    <button id="js-humberger" type="button" class="humberger" aria-controls="navigation" aria-expanded="false">
+        <span class="humberger__line"></span>
+    </button>
+    <!-- ロゴ（必須タグ使用） -->
+    <div class="logo">
+        <a href="{IndexPageURL}">{LogoTag}</a>
+    </div>
+    <!-- ナビゲーションエリア -->
+    <div class="header__nav-area js-nav-area" id="sp-gmenu-area">
+        {block:AppsSearch}
+            <div class="mb4">
+                <form role="search" method="get" class="search-form" action="{SearchPageURL}">
+                    <input type="search" name="q" placeholder="SEARCH" value="{IndexPageSearch}" />
+                    <input type="submit" value="→" />
+                </form>
+            </div>
+        {/block:AppsSearch}
+                 <ul class="global-navigation__list mb4">
+             <li><a href="{IndexPageURL}">HOME</a></li>
+             <!-- ITEMカテゴリメニュー -->
+             <li>
+                 <a class="expand" href="#">ITEM</a>
+                 <ul class="ex-list" style="display: none;">
+                     <!-- BASEカテゴリ管理App有効時 -->
+                     {block:AppsItemCategory}
+                         {block:AppsItemCategoryCategories}
+                             <!-- 大カテゴリ -->
+                             <li><a href="{AppsItemCategoryCategoryPageURL}">{AppsItemCategoryCategoryName}</a></li>
+                             <!-- 中カテゴリがある場合は表示 -->
+                             {block:HasAppsItemCategoryMediumCategories}
+                                 {block:AppsItemCategoryMediumCategories}
+                                     <li class="sub-category"><a href="{AppsItemCategoryMediumCategoryPageURL}">{AppsItemCategoryMediumCategoryName}</a></li>
+                                 {/block:AppsItemCategoryMediumCategories}
+                             {/block:HasAppsItemCategoryMediumCategories}
+                         {/block:AppsItemCategoryCategories}
+                     {/block:AppsItemCategory}
+                     <!-- カテゴリが設定されていない場合のメッセージ -->
+                     <li style="display: none;" class="no-category-message">
+                         <span style="color: #666; font-size: 0.9rem; font-weight: 300;">カテゴリが設定されていません</span>
+                     </li>
+                 </ul>
+             </li>
+             {block:AppsBlog}
+                 <li><a href="{BlogPageURL}">LOOK BOOK</a></li>
+             {/block:AppsBlog}
+             <li><a href="{AboutPageURL}">ABOUT</a></li>
+             <li><a href="{ContactPageURL}">CONTACT</a></li>
+         </ul>
+    </div>
+    <!-- Ajax用隠しフィールド -->
+    {block:IndexPage}
+        <span id="max_page" style="display: none;">{MaxPageNumber}</span>
+        <span id="next_page" style="display: none;">{NextPageNumber}</span>
+    {/block:IndexPage}
+    <!-- メインコンテンツ -->
+{block:IndexPage}
+    {block:NotShopPublic}
+            <div class="page-content">
+                <h2>We are coming soon</h2>
+                <p>{lang:NotShopPublicMessage}</p>
+            </div>
+    {/block:NotShopPublic}
+            {block:ShopPublic}
+            <!-- メインビジュアル（トップページのみ） -->
+            {block:NoIndexPageCategory}{block:NoIndexPageSearch}
+                <main class="main-visual">
+                    <div class="visual-content">
+                        <div class="hero-image">
+                            <!-- デスクトップ用画像（768px以上で表示） -->
+                            <img src="https://basefile.akamaized.net/holylabel-official-ec/6858e8f347888/HLE382A4E383A1E383BCE382B7E38299E794BBE5838F-E7B7A8E99B86E6B888E381BF-E7B7A8E99B86E6B888E381BF28129.png" alt="Holy Label Collection" class="hero-image-desktop">
+                            <!-- モバイル用画像（768px以下で表示）- 縦長画像推奨 -->
+                            <img src="https://basefile.akamaized.net/holylabel-official-ec/6857a47021abf/image30.png" alt="Holy Label Collection" class="hero-image-mobile">
+                        </div>
+                    </div>
+                </main>
+            {/block:NoIndexPageSearch}{/block:NoIndexPageCategory}
+            <!-- カテゴリページのタイトル -->
+            {block:IndexPageCategory}
+                <section class="category-header">
+                    <div class="page-content">
+                        <!-- パンくずリスト -->
+                        {block:AppsItemCategory}
+                            {block:BreadcrumbTag}
+                                <div class="breadcrumb-container">
+                                    {BreadcrumbTag}
+                                </div>
+                            {/block:BreadcrumbTag}
+                        {/block:AppsItemCategory}
+                        <h2>{IndexPageCategory}</h2>
+                        <!-- 子カテゴリがある場合は表示 -->
+                        {block:AppsItemCategory}
+                            {block:HasAppsItemCategoryChildCategories}
+                                <div class="child-categories">
+                                    <ul class="child-category-list">
+                                        {block:AppsItemCategoryChildCategories}
+                                            <li><a href="{AppsItemCategoryChildCategoryPageURL}">{AppsItemCategoryChildCategoryName}</a></li>
+                                        {/block:AppsItemCategoryChildCategories}
+                                    </ul>
+                                </div>
+                            {/block:HasAppsItemCategoryChildCategories}
+                        {/block:AppsItemCategory}
+                    </div>
+                </section>
+            {/block:IndexPageCategory}
+            <!-- 検索結果のタイトル -->
+            {block:IndexPageSearch}
+                <section class="search-header">
+                    <div class="page-content">
+                        <h2>Search results: "{IndexPageSearch}"</h2>
+                    </div>
+                </section>
+            {/block:IndexPageSearch}
+            <!-- 商品一覧（カテゴリページ・検索結果） -->
+            {block:IndexPageCategory}
+                {block:HasItems}
+                    <section class="product-section">
+                        <div class="product-grid" id="product-grid">
+                            {block:Items}
+                                <div class="product-item{block:NoItemStock} out-of-stock{/block:NoItemStock}{block:ItemEndOfSale} out-of-stock{/block:ItemEndOfSale}">
+                                    <a href="{ItemPageURL}">
+                                        {block:AppsItemLabel}
+                                            {AppsItemLabelTag}
+                                        {/block:AppsItemLabel}
+                                        <div class="product-image">
+                                            <img src="{block:ItemImage1}{ItemImage1URL-500}{/block:ItemImage1}{block:NoItemImage1}{ItemNoImageURL}{/block:NoItemImage1}" alt="{ItemTitle}" title="{ItemTitle}" onload="this.classList.add('loaded'); this.parentElement.classList.add('loaded')">
+                                            {block:ItemNowOnSale}
+                                                {block:NoItemStock}
+                                                    <div class="soldout_cover"><p>Out of stock</p></div>
+                                                {/block:NoItemStock}
+                                            {/block:ItemNowOnSale}
+                                            {block:ItemEndOfSale}
+                                                <div class="soldout_cover"><p>Out of stock</p></div>
+                                            {/block:ItemEndOfSale}
+                                        </div>
+                                        <div class="product-info">
+                                            <h3 class="product-title">{ItemTitle}</h3>
+                                            <div class="product-price">
+                                                {block:NoItemProperPrice}
+                                                    <span class="current-price">{ItemPrice}</span>
+                                                {/block:NoItemProperPrice}
+                                                {block:HasItemProperPrice}
+                                                    <div class="price-sale">
+                                                        <span class="original-price">{ItemProperPrice}</span>
+                                                        <span class="sale-price">{ItemPrice}</span>
+                                                        <span class="discount-rate">{ItemDiscountRate}</span>
+                                                    </div>
+                                                {/block:HasItemProperPrice}
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            {/block:Items}
+                                        </div>
+                        <!-- もっと見るボタン -->
+                        <button id="load-more-btn" class="load-more-btn" style="display: none;">
+                            MORE ITEMS
+                        </button>
+                    </section>
+                {/block:HasItems}
+                {block:NoItems}
+                    <div class="page-content">
+                        <h2>Not Found</h2>
+                    </div>
+                {/block:NoItems}
+            {/block:IndexPageCategory}
+            <!-- 検索結果の商品一覧 -->
+            {block:IndexPageSearch}
+                {block:HasItems}
+                    <section class="product-section">
+                        <div class="product-grid" id="product-grid">
+                            {block:Items}
+                                <div class="product-item{block:NoItemStock} out-of-stock{/block:NoItemStock}{block:ItemEndOfSale} out-of-stock{/block:ItemEndOfSale}">
+                                    <a href="{ItemPageURL}">
+                                        {block:AppsItemLabel}
+                                            {AppsItemLabelTag}
+                                        {/block:AppsItemLabel}
+                                        <div class="product-image">
+                                            <img src="{block:ItemImage1}{ItemImage1URL-500}{/block:ItemImage1}{block:NoItemImage1}{ItemNoImageURL}{/block:NoItemImage1}" alt="{ItemTitle}" title="{ItemTitle}" onload="this.classList.add('loaded'); this.parentElement.classList.add('loaded')">
+                                            {block:ItemNowOnSale}
+                                                {block:NoItemStock}
+                                                    <div class="soldout_cover"><p>Out of stock</p></div>
+                                                {/block:NoItemStock}
+                                            {/block:ItemNowOnSale}
+                                            {block:ItemEndOfSale}
+                                                <div class="soldout_cover"><p>Out of stock</p></div>
+                                            {/block:ItemEndOfSale}
+                                        </div>
+                                        <div class="product-info">
+                                            <h3 class="product-title">{ItemTitle}</h3>
+                                            <div class="product-price">
+                                                {block:NoItemProperPrice}
+                                                    <span class="current-price">{ItemPrice}</span>
+                                                {/block:NoItemProperPrice}
+                                                {block:HasItemProperPrice}
+                                                    <div class="price-sale">
+                                                        <span class="original-price">{ItemProperPrice}</span>
+                                                        <span class="sale-price">{ItemPrice}</span>
+                                                        <span class="discount-rate">{ItemDiscountRate}</span>
+                                                    </div>
+                                                {/block:HasItemProperPrice}
+                                            </div>
+                                        </div>
+                                    </a>
+                                </div>
+                            {/block:Items}
+                        </div>
+                        <!-- もっと見るボタン -->
+                        <button id="load-more-btn" class="load-more-btn" style="display: none;">
+                            MORE ITEMS
+                        </button>
+                    </section>
+                {/block:HasItems}
+                {block:NoItems}
+                    <div class="page-content">
+                        <h2>No results found</h2>
+                    </div>
+                {/block:NoItems}
+            {/block:IndexPageSearch}
+    {/block:ShopPublic}
+{/block:IndexPage}
+    <!-- 商品詳細ページ -->
+{block:ItemPage}
+        <!-- 違法報告メッセージ（必須） -->
+        {IllegalReportMessageTag}
+        <section class="product-detail">
+            <div class="product-detail-image">
+                        {block:AppsItemLabel}
+                            {AppsItemLabelTag}
+                        {/block:AppsItemLabel}
+                <!-- メイン画像表示 -->
+                <div class="main-image-container" id="mainImageContainer">
+                    <img id="mainImage" 
+                         src="{block:ItemImage1}{ItemImage1URL-640}{/block:ItemImage1}{block:NoItemImage1}{ItemNoImageURL}{/block:NoItemImage1}" 
+                         alt="{ItemTitle}" 
+                         title="{ItemTitle}">
+                    <!-- カルーセル用ナビゲーションボタン -->
+                    <button class="image-carousel-nav prev" id="prevImageBtn" type="button">
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="15,18 9,12 15,6"></polyline>
+                        </svg>
+                    </button>
+                    <button class="image-carousel-nav next" id="nextImageBtn" type="button">
+                        <svg viewBox="0 0 24 24">
+                            <polyline points="9,18 15,12 9,6"></polyline>
+                        </svg>
+                    </button>
+                    <!-- 画像インジケーター -->
+                    <div class="image-indicators" id="imageIndicators"></div>
+                </div>
+                <!-- サムネイル画像リスト -->
+                <div class="thumbnail-container">
+                    {block:ItemImage1}
+                    <div class="thumbnail-item active" data-image="{ItemImage1URL-640}">
+                        <img src="{ItemImage1URL-174}" alt="{ItemTitle}">
+                    </div>
+                    {/block:ItemImage1}
+                    {block:ItemImage2}
+                    <div class="thumbnail-item" data-image="{ItemImage2URL-640}">
+                        <img src="{ItemImage2URL-174}" alt="{ItemTitle}">
+                    </div>
+                    {/block:ItemImage2}
+                    {block:ItemImage3}
+                    <div class="thumbnail-item" data-image="{ItemImage3URL-640}">
+                        <img src="{ItemImage3URL-174}" alt="{ItemTitle}">
+                    </div>
+                    {/block:ItemImage3}
+                    {block:ItemImage4}
+                    <div class="thumbnail-item" data-image="{ItemImage4URL-640}">
+                        <img src="{ItemImage4URL-174}" alt="{ItemTitle}">
+                    </div>
+                    {/block:ItemImage4}
+                    {block:ItemImage5}
+                    <div class="thumbnail-item" data-image="{ItemImage5URL-640}">
+                        <img src="{ItemImage5URL-174}" alt="{ItemTitle}">
+                    </div>
+                    {/block:ItemImage5}
+                    {block:ItemImage6}
+                    <div class="thumbnail-item" data-image="{ItemImage6URL-640}">
+                        <img src="{ItemImage6URL-174}" alt="{ItemTitle}">
+                    </div>
+                    {/block:ItemImage6}
+                    {block:ItemImage7}
+                    <div class="thumbnail-item" data-image="{ItemImage7URL-640}">
+                        <img src="{ItemImage7URL-174}" alt="{ItemTitle}">
+                    </div>
+                    {/block:ItemImage7}
+                    {block:ItemImage8}
+                    <div class="thumbnail-item" data-image="{ItemImage8URL-640}">
+                        <img src="{ItemImage8URL-174}" alt="{ItemTitle}">
+                    </div>
+                    {/block:ItemImage8}
+                    {block:ItemImage9}
+                    <div class="thumbnail-item" data-image="{ItemImage9URL-640}">
+                        <img src="{ItemImage9URL-174}" alt="{ItemTitle}">
+                    </div>
+                    {/block:ItemImage9}
+                    {block:ItemImage10}
+                    <div class="thumbnail-item" data-image="{ItemImage10URL-640}">
+                        <img src="{ItemImage10URL-174}" alt="{ItemTitle}">
+                    </div>
+                    {/block:ItemImage10}
+                </div>
+                </div>
+            <div class="product-detail-info">
+                <h1 class="product-detail-title">{ItemTitle}</h1>
+                <div class="product-detail-price">
+                {block:NoItemProperPrice}
+                        <span class="current-price">{ItemPrice}</span>
+                {/block:NoItemProperPrice}
+                {block:HasItemProperPrice}
+                        <div class="price-sale">
+                            <span class="original-price">{ItemProperPrice}</span>
+                            <span class="sale-price">{ItemPrice}</span>
+                            <span class="discount-rate">{ItemDiscountRate}</span>
+                        </div>
+                {/block:HasItemProperPrice}
+                </div>
+                <div class="product-description">
+                    {ItemDetail}
+            </div>
+                <!-- 商品購入フォーム -->
+            {block:PurchaseForm}
+                    <div class="product-purchase">
+                {ItemSelectTag}
+                        {block:HasItemStock}
+                            {block:ItemWaitingForSale}
+                                <p style="color: var(--muted-text); font-size: 12px; font-weight: var(--weight-light);">Coming Soon</p>
+                            {/block:ItemWaitingForSale}
+                            {block:ItemNowOnSale}
+                                {block:ItemPreOrder}
+                                    <p style="color: var(--accent-color); font-size: 12px; font-weight: var(--weight-light);">Pre-order</p>
+                                {/block:ItemPreOrder}
+                {PurchaseButton}
+                            {/block:ItemNowOnSale}
+                            {block:ItemEndOfSale}
+                                <p style="color: var(--muted-text); font-size: 12px; font-weight: var(--weight-light);">Sale Ended</p>
+                            {/block:ItemEndOfSale}
+                        {/block:HasItemStock}
+                        {block:NoItemStock}
+                            {block:ItemWaitingForSale}
+                                <p style="color: var(--muted-text); font-size: 12px; font-weight: var(--weight-light);">Coming Soon</p>
+                            {/block:ItemWaitingForSale}
+                            {block:ItemNowOnSale}
+                                {PurchaseButton}
+                            {/block:ItemNowOnSale}
+                            {block:ItemEndOfSale}
+                                <p style="color: var(--muted-text); font-size: 12px; font-weight: var(--weight-light);">Sale Ended</p>
+                            {/block:ItemEndOfSale}
+                        {/block:NoItemStock}
+                    </div>
+                    {AppsAgeVerificationWarningTag}
+                    <!-- Pay ID あと払いウィジェット -->
+                    {PayIDWidgetTag}
+            {/block:PurchaseForm}
+                <!-- ソーシャルボタン -->
+                <div class="social-share">
+                {SocialButtonTag}
+                </div>
+                <!-- 必須タグ -->
+                <div class="item-attention">
+                    {ItemAttentionTag}
+                </div>
+                <div class="illegal-report">
+                {IllegalReportTag}
+            </div>
+        </div>
+        </section>
+        <!-- レビュー表示 -->
+        {block:AppsReview}
+        {AppsReviewTag}
+        {/block:AppsReview}
+        <!-- 関連商品表示 -->
+        {block:HasRelatedItems}
+        <section class="related-products">
+            <div class="related-products-header">
+                <h2 class="related-products-title">Related Items</h2>
+            </div>
+            <div class="related-products-grid">
+                {block:RelatedItems}
+                <div class="related-product-item">
+                    <a href="{RelatedItemPageURL}">
+                        <div class="related-product-image">
+                            <img src="{RelatedItemImageURL-640}" 
+                                 alt="{RelatedItemTitle}" 
+                                 title="{RelatedItemTitle}"
+                                 onload="this.classList.add('loaded'); this.parentElement.classList.add('loaded')">
+                        </div>
+                        <div class="related-product-info">
+                            <h3 class="related-product-title">{RelatedItemTitle}</h3>
+                            <p class="related-product-price">{RelatedItemPrice}</p>
+                        </div>
+                    </a>
+                </div>
+                {/block:RelatedItems}
+            </div>
+        </section>
+        {/block:HasRelatedItems}
+        <!-- 一覧に戻るボタン -->
+        <div class="back-to-list-container">
+            <a href="{IndexPageURL}" class="back-to-list-btn">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" class="back-icon">
+                    <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                BACK TO HOME
+            </a>
+        </div>
+{/block:ItemPage}
+    <!-- Aboutページ -->
+{block:AboutPage}
+    <div class="about-page">
+        <!-- メイン画像（4:3比率） -->
+        <div class="about-image">
+            <!-- 画像URLをここに挿入してください -->
+            <!-- <img src="画像URLをここに入力" alt="About Holy Label" /> -->
+            <img src="https://basefile.akamaized.net/holylabel-official-ec/685dea2a874d4/E382B5E383B3E38395E3829AE383AB2822928129.png" alt="About Holy Label" />
+            </div>
+        <!-- SNSリンク -->
+        <div class="about-social">
+            <a href="https://www.instagram.com/hello24___?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="social-link">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.40s-.644-1.44-1.439-1.40z"/>
+                </svg>
+                <span>Instagram</span>
+            </a>
+            <a href="https://www.tiktok.com/@hello24___" target="_blank" class="social-link">
+                <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16.8 8.3v2.8c-1.1 0-2.1-.3-3-.8v4.2c0 2.9-2.4 5.3-5.3 5.3S3.2 17.4 3.2 14.5s2.4-5.3 5.3-5.3c.3 0 .6 0 .9.1v2.9c-.3-.1-.6-.1-.9-.1-1.3 0-2.4 1.1-2.4 2.4s1.1 2.4 2.4 2.4 2.4-1.1 2.4-2.4V3.7h2.9c.3 1.4 1.3 2.6 2.6 3 0 0 .3.1.4.1v2.9c-.4 0-.9-.1-1.3-.2-.6-.2-1.1-.5-1.7-.9z"/>
+                </svg>
+                <span>TikTok</span>
+            </a>
+            </div>
+    </div>
+{/block:AboutPage}
+        <!-- 特定商取引法ページ -->
+{block:LawPage}
+    <div class="page-content">
+        <h1>特定商取引法に基づく表記</h1>
+{PageContents}
+    </div>
+{/block:LawPage}
+    <!-- プライバシーポリシーページ -->
+{block:PrivacyPage}
+    <div class="page-content">
+        <h1>プライバシーポリシー</h1>
+        {PageContents}
+    </div>
+{/block:PrivacyPage}
+    <!-- LOOKBOOKページ（ブログ） -->
+{block:BlogPage}
+    <div class="page-content">
+        <h1>LOOK BOOK</h1>
+        {PageContents}
+    </div>
+{/block:BlogPage}
+    <!-- その他のページコンテンツ（特商法・プライバシーポリシー以外） -->
+{block:IndexPage}
+    <div class="page-content">
+{PageContents}
+    </div>
+{/block:IndexPage}
+{block:ItemPage}
+    <div class="page-content">
+{PageContents}
+    </div>
+{/block:ItemPage}
+{block:ContactPage}
+    <div class="page-content">
+{PageContents}
+    </div>
+{/block:ContactPage}
+    <!-- Instagram固定ボタン（ホーム画面のみ） -->
+    <a href="https://www.instagram.com/hello24___?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="instagram-fixed-btn">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.40z"/>
+        </svg>
+    </a>
+    <!-- フッター -->
+    <footer class="footer">
+        <div class="footer-links">
+            <a href="{PrivacyPageURL}">PRIVACY POLICY</a>
+            <a href="{LawPageURL}">LEGAL INFORMATION</a>
+            <a href="{ContactPageURL}">CONTACT</a>
+                    </div>
+        <div class="copyright">
+            <small>© {ShopName} All rights reserved.</small>
+    </div>
+</footer>
+    <!-- JavaScript -->
+    <script>
+        /*
+           JavaScript - ユーティリティ関数
+ */
+        const DOMUtils = {
+            // 効率的なDOM要素取得
+            get: (selector) => document.querySelector(selector),
+            getAll: (selector) => document.querySelectorAll(selector),
+            getId: (id) => document.getElementById(id),
+            // 共通DOM要素キャッシュ
+            cache: {},
+            getCached: function(key, selector) {
+                if (!this.cache[key]) {
+                    this.cache[key] = this.get(selector);
+                }
+                return this.cache[key];
+            },
+            // 基本要素のキャッシュ
+            hamburger: () => DOMUtils.getCached('hamburger', '#js-humberger'),
+            navArea: () => DOMUtils.getCached('navArea', '.js-nav-area'),
+            logo: () => DOMUtils.getCached('logo', '.logo'),
+            body: () => document.body
+        };
+        // アニメーション設定
+        const AnimationConfig = {
+            FADE_DELAY: 2000,
+            STAGGER_DELAY: 0.1,
+            SCROLL_THRESHOLD: 100,
+            TRANSITION_DURATION: '0.8s'
+        };
+        // ページ状態管理
+        const PageState = {
+            cache: null,
+            get() {
+                if (!this.cache) {
+                    this.cache = {
+                        hasMainVisual: DOMUtils.get('.main-visual') !== null,
+                        hasProductDetail: DOMUtils.get('.product-detail') !== null,
+                        hasAboutSection: DOMUtils.get('.about-section') !== null,
+                        hasCategoryHeader: DOMUtils.get('.category-header') !== null,
+                        hasSearchHeader: DOMUtils.get('.search-header') !== null,
+                        hasProductSection: DOMUtils.get('.product-section') !== null,
+                        isShopTopPage: document.body.id === 'shopTopPage'
+                    };
+                }
+                return this.cache;
+            },
+            isHomePage() {
+                const state = this.get();
+                return state.isShopTopPage && 
+                       state.hasMainVisual && 
+                       !state.hasProductDetail && 
+                       !state.hasAboutSection && 
+                       !state.hasCategoryHeader && 
+                       !state.hasSearchHeader &&
+                       !state.hasProductSection;
+            }
+        };
+        /*
+           JavaScript - スタイリング関数
+ */
+        function initRestockNotificationModal() {
+            const style = document.createElement('style');
+            style.textContent = `
+                .base-restock-modal {
+                    background-color: var(--primary-bg) !important;
+                    color: var(--primary-text) !important;
+                    border: 1px solid var(--border-color) !important;
+                }
+                .base-restock-modal .modal-header {
+                    border-bottom: 1px solid var(--border-color) !important;
+                    color: var(--primary-text) !important;
+                }
+                .base-restock-modal .modal-title {
+                    color: var(--primary-text) !important;
+                    font-weight: var(--weight-normal) !important;
+                    letter-spacing: 1px !important;
+                }
+                .base-restock-modal .modal-body {
+                    color: var(--secondary-text) !important;
+                    font-weight: var(--weight-light) !important;
+                }
+                .base-restock-modal input[type="email"] {
+                    background-color: var(--primary-bg) !important;
+                    color: var(--primary-text) !important;
+                    border: 1px solid var(--border-color) !important;
+                    font-weight: var(--weight-light) !important;
+                }
+                .base-restock-modal input[type="email"]:focus {
+                    border-color: var(--accent-color) !important;
+                    box-shadow: 0 0 0 1px var(--accent-color) !important;
+                }
+                .base-restock-modal .btn-primary {
+                    background-color: var(--accent-color) !important;
+                    border-color: var(--accent-color) !important;
+                    color: var(--primary-text) !important;
+                    font-weight: var(--weight-normal) !important;
+                    letter-spacing: 1px !important;
+                }
+                .base-restock-modal .btn-primary:hover {
+                    background-color: rgba(212, 56, 131, 0.8) !important;
+                    border-color: rgba(212, 56, 131, 0.8) !important;
+                }
+                .base-restock-modal .btn-close {
+                    color: var(--secondary-text) !important;
+                }
+                .base-restock-modal .btn-close:hover {
+                    color: var(--primary-text) !important;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        /*
+           JavaScript - アニメーション機能
+ */
+        const AnimationManager = {
+            // インターセクションオブザーバーのインスタンス管理
+            observers: new Map(),
+            createObserver(callback, options = {}) {
+                const defaultOptions = {
+                    threshold: 0.1,
+                    rootMargin: '50px'
+                };
+                return new IntersectionObserver(callback, { ...defaultOptions, ...options });
+            },
+            initRelatedProducts() {
+                const relatedItems = DOMUtils.getAll('.related-product-item');
+                if (relatedItems.length === 0) return;
+                const observer = this.createObserver((entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            entry.target.style.opacity = '1';
+                            entry.target.style.transform = 'translateY(0)';
+                            observer.unobserve(entry.target);
+                        }
+                    });
+                });
+                relatedItems.forEach((item, index) => {
+                    Object.assign(item.style, {
+                        opacity: '0',
+                        transform: 'translateY(30px)',
+                        transition: `opacity ${AnimationConfig.TRANSITION_DURATION} ease ${index * AnimationConfig.STAGGER_DELAY}s, transform ${AnimationConfig.TRANSITION_DURATION} ease ${index * AnimationConfig.STAGGER_DELAY}s`
+                    });
+                    observer.observe(item);
+                });
+                this.observers.set('relatedProducts', observer);
+            },
+            animateOnScroll() {
+                const items = DOMUtils.getAll('.product-item:not(.scroll-animated)');
+                items.forEach(item => {
+                    const rect = item.getBoundingClientRect();
+                    const isVisible = rect.top < window.innerHeight - AnimationConfig.SCROLL_THRESHOLD && rect.bottom > 0;
+                    if (isVisible) item.classList.add('scroll-animated');
+                });
+            },
+            initHomepageAnimation() {
+                if (!PageState.isHomePage()) return;
+                const heroImage = DOMUtils.get('.hero-image');
+                if (heroImage) {
+                    setTimeout(() => heroImage.classList.add('fade-in'), AnimationConfig.FADE_DELAY);
+                }
+            }
+        };
+        /*
+           JavaScript - ナビゲーション制御
+ */
+        const NavigationManager = {
+            elements: {
+                get hamburger() { return DOMUtils.hamburger(); },
+                get navArea() { return DOMUtils.navArea(); },
+                get body() { return DOMUtils.body(); }
+            },
+            isActive() {
+                return this.elements.hamburger?.classList.contains('-active') || false;
+            },
+            toggle() {
+                const { hamburger, navArea, body } = this.elements;
+                if (!hamburger || !navArea) return;
+                const isActive = this.isActive();
+                const action = isActive ? 'remove' : 'add';
+                [hamburger, navArea].forEach(el => el.classList[action]('-active'));
+                body.classList[action]('body-fixed');
+                setTimeout(() => LogoManager.updatePosition(), 10);
+            },
+            close() {
+                const { hamburger, navArea, body } = this.elements;
+            if (hamburger && navArea) {
+                    [hamburger, navArea].forEach(el => el.classList.remove('-active'));
+                body.classList.remove('body-fixed');
+            }
+            },
+            init() {
+                const { hamburger, navArea } = this.elements;
+                if (!hamburger || !navArea) return;
+                // ハンバーガーメニューのクリックイベント
+                hamburger.addEventListener('click', () => this.toggle());
+                // 展開メニューの初期化
+                this.initExpandMenus();
+                // メニュー外クリックで閉じる
+                document.addEventListener('click', (event) => {
+                    if (!navArea.contains(event.target) && !hamburger.contains(event.target)) {
+                        this.close();
+                        setTimeout(() => LogoManager.updatePosition(), 10);
+                    }
+                });
+            },
+            initExpandMenus() {
+                const expandLinks = DOMUtils.getAll('a.expand');
+                expandLinks.forEach(link => {
+                    link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const exList = link.nextElementSibling;
+                        const isOpen = link.classList.contains('open');
+                        link.classList.toggle('open', !isOpen);
+                        exList.style.display = isOpen ? 'none' : 'block';
+                    });
+                });
+            }
+        };
+        /*
+           JavaScript - ロゴ制御
+ */
+        const LogoManager = {
+            updatePosition() {
+                const logo = DOMUtils.logo();
+            if (!logo) return;
+                const isMenuOpen = NavigationManager.isActive();
+                const isTop = PageState.isHomePage();
+            // 既存のクラスを削除
+            logo.classList.remove('center-position', 'header-position', 'menu-open-position');
+                // 適切なクラスを追加
+            if (isMenuOpen) {
+                logo.classList.add('menu-open-position');
+                } else if (isTop) {
+                logo.classList.add('center-position');
+            } else {
+                logo.classList.add('header-position');
+            }
+            }
+        };
+        /*
+           JavaScript - カテゴリ表示制御
+ */
+         function initCategoryDisplay() {
+            const itemExpandLink = DOMUtils.get('a.expand[href="#"]');
+            if (itemExpandLink?.textContent.trim() === 'ITEM') {
+                 const exList = itemExpandLink.nextElementSibling;
+                 if (exList) {
+                     const categoryItems = exList.querySelectorAll('li:not(.no-category-message)');
+                     const noMessage = exList.querySelector('.no-category-message');
+                     if (categoryItems.length === 0 && noMessage) {
+                         noMessage.style.display = 'block';
+                     }
+                 }
+             }
+         }
+        /*
+           JavaScript - Instagram固定ボタン制御
+ */
+        function controlInstagramButton() {
+            const instagramBtn = DOMUtils.get('.instagram-fixed-btn');
+            if (!instagramBtn) return;
+            DOMUtils.body().classList.toggle('home-page', PageState.isHomePage());
+        }
+        /*
+           JavaScript - 商品画像カルーセル機能
+ */
+        const ImageCarouselManager = {
+            currentIndex: 0,
+            images: [],
+            init() {
+                this.collectImages();
+                this.setupCarousel();
+                this.bindEvents();
+            },
+            collectImages() {
+                // サムネイル要素から画像URLを収集
+                const thumbnails = DOMUtils.getAll('.thumbnail-item');
+                this.images = Array.from(thumbnails).map(thumb => ({
+                    src: thumb.dataset.image,
+                    alt: thumb.querySelector('img')?.alt || ''
+                }));
+                // 画像がない場合はメイン画像のsrcを使用
+                if (this.images.length === 0) {
+                    const mainImage = DOMUtils.getId('mainImage');
+                    if (mainImage && mainImage.src) {
+                        this.images = [{
+                            src: mainImage.src,
+                            alt: mainImage.alt || ''
+                        }];
+                    }
+                }
+            },
+            setupCarousel() {
+                const mainImageContainer = DOMUtils.getId('mainImageContainer');
+                const imageIndicators = DOMUtils.getId('imageIndicators');
+                if (!mainImageContainer || !imageIndicators) return;
+                // 画像が1枚しかない場合は単一画像クラスを追加
+                if (this.images.length <= 1) {
+                    mainImageContainer.classList.add('single-image');
+                    return;
+                }
+                // インジケーターを生成
+                this.images.forEach((_, index) => {
+                    const indicator = document.createElement('div');
+                    indicator.className = 'image-indicator';
+                    if (index === 0) indicator.classList.add('active');
+                    indicator.addEventListener('click', () => this.goToImage(index));
+                    imageIndicators.appendChild(indicator);
+                });
+            },
+            bindEvents() {
+                const prevBtn = DOMUtils.getId('prevImageBtn');
+                const nextBtn = DOMUtils.getId('nextImageBtn');
+                if (prevBtn) prevBtn.addEventListener('click', () => this.previousImage());
+                if (nextBtn) nextBtn.addEventListener('click', () => this.nextImage());
+                // キーボードナビゲーション
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'ArrowLeft') this.previousImage();
+                    if (e.key === 'ArrowRight') this.nextImage();
+                });
+                // タッチスワイプサポート（モバイル用）
+                this.setupTouchSwipe();
+            },
+            setupTouchSwipe() {
+                const mainImage = DOMUtils.getId('mainImage');
+                if (!mainImage) return;
+                let startX = 0;
+                let endX = 0;
+                mainImage.addEventListener('touchstart', (e) => {
+                    startX = e.changedTouches[0].screenX;
+                });
+                mainImage.addEventListener('touchend', (e) => {
+                    endX = e.changedTouches[0].screenX;
+                    this.handleSwipe();
+                });
+                const handleSwipe = () => {
+                    const threshold = 50; // スワイプの最小距離
+                    const diff = startX - endX;
+                    if (Math.abs(diff) > threshold) {
+                        if (diff > 0) {
+                            this.nextImage(); // 左スワイプで次の画像
+                        } else {
+                            this.previousImage(); // 右スワイプで前の画像
+                        }
+                    }
+                };
+                this.handleSwipe = handleSwipe;
+            },
+            goToImage(index) {
+                if (index < 0 || index >= this.images.length) return;
+                this.currentIndex = index;
+                this.updateImage();
+                this.updateIndicators();
+            },
+            nextImage() {
+                if (this.images.length <= 1) return;
+                this.currentIndex = (this.currentIndex + 1) % this.images.length;
+                this.updateImage();
+                this.updateIndicators();
+            },
+            previousImage() {
+                if (this.images.length <= 1) return;
+                this.currentIndex = this.currentIndex === 0 ? this.images.length - 1 : this.currentIndex - 1;
+                this.updateImage();
+                this.updateIndicators();
+            },
+            updateImage() {
+                const mainImage = DOMUtils.getId('mainImage');
+                if (!mainImage || !this.images[this.currentIndex]) return;
+                const currentImage = this.images[this.currentIndex];
+                mainImage.src = currentImage.src;
+                mainImage.alt = currentImage.alt;
+            },
+            updateIndicators() {
+                const indicators = DOMUtils.getAll('.image-indicator');
+                indicators.forEach((indicator, index) => {
+                    indicator.classList.toggle('active', index === this.currentIndex);
+                });
+            }
+        };
+        /*
+           JavaScript - Ajax読み込み機能
+ */
+        const LoadMoreManager = {
+            elements: {
+                get btn() { return DOMUtils.getId('load-more-btn'); },
+                get maxPage() { return DOMUtils.getId('max_page'); },
+                get nextPage() { return DOMUtils.getId('next_page'); },
+                get productGrid() { return DOMUtils.getId('product-grid'); }
+            },
+            currentPage: 1,
+            maxPageNum: 1,
+            init() {
+                const { btn, maxPage, nextPage } = this.elements;
+                if (!btn || !maxPage || !nextPage) return;
+                this.maxPageNum = parseInt(maxPage.textContent);
+                this.currentPage = parseInt(nextPage.textContent);
+                if (this.maxPageNum > 1) {
+                    btn.style.display = 'block';
+                    btn.addEventListener('click', () => this.loadMore());
+                }
+            },
+            loadMore() {
+                if (this.currentPage <= this.maxPageNum) {
+                    this.loadItems(this.currentPage);
+                    this.currentPage++;
+                    if (this.currentPage > this.maxPageNum) {
+                        this.elements.btn.style.display = 'none';
+                    }
+                }
+            },
+            loadItems(page) {
+            const xhr = new XMLHttpRequest();
+            xhr.open('GET', '{LoadItemsPageURL}' + page + '{LoadItemsPageURLParams}', true);
+                xhr.onreadystatechange = () => {
+                if (xhr.readyState === 4 && xhr.status === 200) {
+                        this.processNewItems(xhr.responseText);
+                    }
+                };
+                xhr.send();
+            },
+            processNewItems(responseText) {
+                const { productGrid } = this.elements;
+                if (!productGrid) return;
+                const currentItemCount = productGrid.querySelectorAll('.product-item').length;
+                const tempDiv = document.createElement('div');
+                tempDiv.innerHTML = responseText;
+                const newItems = tempDiv.querySelectorAll('.product-item');
+                newItems.forEach((item, index) => {
+                    const delay = (currentItemCount + index + 1) % 9 || 9;
+                    item.style.animationDelay = (delay * AnimationConfig.STAGGER_DELAY) + 's';
+                    // Out of stock状態を確認
+                    if (item.classList.contains('out-of-stock') || item.innerHTML.includes('SOLD OUT')) {
+                                item.classList.add('out-of-stock');
+                            }
+                            productGrid.appendChild(item);
+                        });
+                setTimeout(() => AnimationManager.animateOnScroll(), 100);
+            }
+        };
+        /*
+           JavaScript - 初期化処理
+ */
+        document.addEventListener('DOMContentLoaded', function() {
+            // メイン初期化
+            DOMUtils.body().classList.add('loaded');
+            // 基本機能初期化
+            NavigationManager.close();
+            LogoManager.updatePosition();
+            NavigationManager.init();
+            initCategoryDisplay();
+            initRestockNotificationModal();
+            // アニメーション初期化
+            AnimationManager.initRelatedProducts();
+            AnimationManager.initHomepageAnimation();
+            // 機能初期化
+            LoadMoreManager.init();
+            ImageCarouselManager.init();
+            controlInstagramButton();
+            // DOM変更監視
+            if (window.MutationObserver) {
+                const observer = new MutationObserver(function(mutations) {
+                    let shouldRecheck = false;
+                    mutations.forEach(function(mutation) {
+                        if (mutation.type === 'childList') shouldRecheck = true;
+                    });
+                    if (shouldRecheck) setTimeout(() => LogoManager.updatePosition(), 100);
+                });
+                observer.observe(document.body, { childList: true, subtree: true });
+            }
+            // スクロールアニメーション初期化
+            setTimeout(() => AnimationManager.animateOnScroll(), 500);
+        });
+        // スクロールイベント（デバウンス処理付き）
+        let scrollTimeout;
+        window.addEventListener('scroll', () => {
+            if (scrollTimeout) return;
+            scrollTimeout = setTimeout(() => {
+                AnimationManager.animateOnScroll();
+                scrollTimeout = null;
+            }, 16); // 60fps制限
+        });
+    </script>
+</body>
+</html>
+{/block:NotLoadItemsPage}
+{block:LoadItemsPage}
+{block:Items}
+    <div class="product-item{block:NoItemStock} out-of-stock{/block:NoItemStock}{block:ItemEndOfSale} out-of-stock{/block:ItemEndOfSale}">
+            <a href="{ItemPageURL}">
+                {block:AppsItemLabel}
+                    {AppsItemLabelTag}
+                {/block:AppsItemLabel}
+            <div class="product-image">
+                <img src="{block:ItemImage1}{ItemImage1URL-500}{/block:ItemImage1}{block:NoItemImage1}{ItemNoImageURL}{/block:NoItemImage1}" alt="{ItemTitle}" title="{ItemTitle}" onload="this.classList.add('loaded'); this.parentElement.classList.add('loaded')">
+                {block:ItemNowOnSale}
+                    {block:NoItemStock}
+                    <div class="soldout_cover"><p>Out of stock</p></div>
+                    {/block:NoItemStock}
+                {/block:ItemNowOnSale}
+                {block:ItemEndOfSale}
+                    <div class="soldout_cover"><p>Out of stock</p></div>
+                {/block:ItemEndOfSale}
+        </div>
+            <div class="product-info">
+                <h3 class="product-title">{ItemTitle}</h3>
+                <div class="product-price">
+                {block:NoItemProperPrice}
+                        <span class="current-price">{ItemPrice}</span>
+                {/block:NoItemProperPrice}
+                {block:HasItemProperPrice}
+                        <div class="price-sale">
+                            <span class="original-price">{ItemProperPrice}</span>
+                            <span class="sale-price">{ItemPrice}</span>
+                            <span class="discount-rate">{ItemDiscountRate}</span>
+                        </div>
+                {/block:HasItemProperPrice}
+                </div>
+            </div>
+        </a>
+    </div>
+{/block:Items}
+{/block:LoadItemsPage}
+{block:AppsSearch}
+<script>
+    $(function(){
+        var _color = $('.nav-item').css('color') || '#fff';
+        $('.itemSearch__form').css('border-color', _color);
+    });
+</script>
+{/block:AppsSearch}
