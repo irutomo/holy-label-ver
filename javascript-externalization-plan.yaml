@@ -607,25 +607,25 @@ implementation_checklist:
 # 📋 URL発行メモ台帳
 url_registry:
   repository_info:
-    github_url: "TBD"  # 実装時に更新
-    jsdelivr_base: "TBD"  # 実装時に更新
+    github_url: "https://github.com/irutomo/irutomo-claudetest"
+    jsdelivr_base: "https://cdn.jsdelivr.net/gh/irutomo/irutomo-claudetest@main/holy-label-js-libs"
     
   production_urls:
-    dom_utils: "TBD"                    # 実装時に更新
-    page_state: "TBD"                   # 実装時に更新  
-    animation_config: "TBD"             # 実装時に更新
-    animation_manager: "TBD"            # 実装時に更新
-    navigation_manager: "TBD"           # 実装時に更新
-    logo_manager: "TBD"                 # 実装時に更新
-    image_carousel_manager: "TBD"       # 実装時に更新
-    load_more_manager: "TBD"            # 実装時に更新
-    utilities: "TBD"                    # 実装時に更新
+    dom_utils: "https://cdn.jsdelivr.net/gh/irutomo/irutomo-claudetest@main/holy-label-js-libs/dist/dom-utils.min.js"
+    page_state: "https://cdn.jsdelivr.net/gh/irutomo/irutomo-claudetest@main/holy-label-js-libs/dist/page-state.min.js"
+    animation_config: "TBD - 要実装"
+    animation_manager: "TBD - 要実装"
+    navigation_manager: "TBD - 要実装"
+    logo_manager: "TBD - 要実装"
+    image_carousel_manager: "TBD - 要実装"
+    load_more_manager: "TBD - 要実装"
+    utilities: "TBD - 要実装"
     
   version_history:
     v1_0_0:
-      release_date: "TBD"
-      changelog: "初期リリース - 全機能外部化"
-      urls: "上記production_urls参照"
+      release_date: "2024-06-28"
+      changelog: "初期リリース - DOMUtils・PageStateライブラリ実装完了"
+      urls: "dom_utils, page_state のみ利用可能"
 
 ---
 # 🎯 実装優先度・緊急度マトリクス

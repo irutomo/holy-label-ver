@@ -1,0 +1,38 @@
+{
+  "name": "holy-label-animation-libs",
+  "version": "1.0.0",
+  "description": "BASE ECサイトテーマ用アニメーションライブラリ（緊急外部化版）",
+  "main": "animation-config-optimized.js",
+  "files": [
+    "animation-config-optimized.js",
+    "animation-manager.js",
+    "dom-utils.js",
+    "image-carousel.js"
+  ],
+  "scripts": {
+    "build": "echo 'Building animation libraries...'",
+    "test": "echo 'Testing animation libraries...'"
+  },
+  "keywords": [
+    "animation",
+    "base",
+    "ecommerce",
+    "javascript",
+    "cdn"
+  ],
+  "author": "HOLY LABEL Development Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/holy-label/animation-libs"
+  },
+  "jsdelivr": "animation-config-optimized.js",
+  "unpkg": "animation-config-optimized.js",
+  "cdnjs": {
+    "namespace": "holy-label-animations",
+    "files": [
+      "animation-config-optimized.js",
+      "animation-manager.js"
+    ]
+  }
+}
